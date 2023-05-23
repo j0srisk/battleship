@@ -32,7 +32,8 @@ function renderProgramGameboard() {
   for (let i = 0; i < programGameboardContainer.children.length; i++) {
     let cell = programGameboardContainer.children[i];
     cell.onclick = function() {renderAttack(i)}
-  };
+  }
+  
 }
 
 function renderUserGameboard() {

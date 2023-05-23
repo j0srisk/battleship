@@ -17,14 +17,59 @@ const gameController = () => {
         }
     };
 
-    //place ships
-    user.board.placeShip(user.ships[0], 0, 'horizontal');
-    // user.board.placeShip(user.ships[1], 10, 'horizontal');
-    // user.board.placeShip(user.ships[2], 20, 'horizontal');
-    // user.board.placeShip(user.ships[3], 30, 'horizontal');
-    // user.board.placeShip(user.ships[4], 40, 'horizontal');
+    const randomShipPlacement = (board, ship) => {
+        let position = Math.floor(Math.random() * 100);
+        let orientation = Math.floor(Math.random() * 2) === 0 ? 'horizontal' : 'vertical';
+        while (!checkShipPlacement(board, ship, position, orientation)) {
+            position = Math.floor(Math.random() * 100);
+            orientation = Math.floor(Math.random() * 2) === 0 ? 'horizontal' : 'vertical';
+        }
+        board.placeShip(ship, position, orientation);
+    };
 
-    program.board.placeShip(program.ships[0], 0, 'horizontal');
+    const checkShipPlacement = (board, ship, position, orientation) => {
+        if (orientation === 'horizontal') {
+            //check if ship is out of bounds
+            if (position % 10 + ship.length > 10) {
+                return false;
+            } else {
+                //check if ship overlaps with another ship
+                for (let i = 0; i < ship.length; i++) {
+                    if (board.board[position + i] != null) {
+                        return false;
+                    }
+                }
+            }
+        } else if (orientation === 'vertical') {
+            //check if ship is out of bounds
+            if (position + (ship.length * 10) > 100) {
+                return false;
+            } else {
+                //check if ship overlaps with another ship
+                for (let i = 0; i < ship.length; i++) {
+                    if (board.board[position + (i * 10)] != null) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    };
+
+    //place ships
+    randomShipPlacement(user.board, user.ships[0]);
+    randomShipPlacement(user.board, user.ships[1]);
+    randomShipPlacement(user.board, user.ships[2]);
+    randomShipPlacement(user.board, user.ships[3]);
+    randomShipPlacement(user.board, user.ships[4]);
+
+    randomShipPlacement(program.board, program.ships[0]);
+    randomShipPlacement(program.board, program.ships[1]);
+    randomShipPlacement(program.board, program.ships[2]);
+    randomShipPlacement(program.board, program.ships[3]);
+    randomShipPlacement(program.board, program.ships[4]);
+
+    // program.board.placeShip(program.ships[0], 0, 'horizontal');
     // program.board.placeShip(program.ships[1], 10, 'horizontal');
     // program.board.placeShip(program.ships[2], 20, 'horizontal');
     // program.board.placeShip(program.ships[3], 30, 'horizontal');
