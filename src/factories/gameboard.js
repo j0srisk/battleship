@@ -19,6 +19,7 @@ const gameboardFactory = () => {
             return 'hit';
         } else {
             board[position] = 'miss';
+            return 'miss';
         }
     };
 

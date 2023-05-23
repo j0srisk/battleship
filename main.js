@@ -7,48 +7,83 @@ const gameContainer = document.createElement('div');
 gameContainer.classList.add('game-container');
 app.appendChild(gameContainer);
 
-const player1GameboardContainer = document.createElement('div');
-player1GameboardContainer.classList.add('gameboard-container');
-player1GameboardContainer.classList.add('player1');
-gameContainer.appendChild(player1GameboardContainer);
+//pretty much duplicated from renderUserGameboard
+//refactor later
+function renderProgramGameboard() {
+  const programGameboardContainer = document.createElement('div');
+  programGameboardContainer.classList.add('gameboard-container');
+  programGameboardContainer.classList.add('program');
+  gameContainer.appendChild(programGameboardContainer);
 
-const player2GameboardContainer = document.createElement('div');
-player2GameboardContainer.classList.add('gameboard-container');
-player2GameboardContainer.classList.add('player2');
-gameContainer.appendChild(player2GameboardContainer);
-
-function renderGameboard() {
-  let player2gameBoard = game.player2.board;
-  for (let i = 0; i < player2gameBoard.board.length; i++) {
+  let programGameboard = game.program.board;
+  for (let i = 0; i < programGameboard.board.length; i++) {
     let cell = document.createElement('div');
     cell.classList.add('gameboard-cell');
-    // rendering ships
-    // if (player2gameBoard.board[i] != null) {
-    //   cell.classList.add('ship');
-    // }
     cell.id = i;
     let peg = document.createElement('div');
     peg.classList.add('peg');
     cell.appendChild(peg);
-    player2GameboardContainer.appendChild(cell);
-    cell.onclick = function() {renderAttack(i)};
+    programGameboardContainer.appendChild(cell);
+
+    cell.onclick = function() {renderAttack(i)}
   };
 }
+
+
+function renderUserGameboard() {
+  const userGameboardContainer = document.createElement('div');
+  userGameboardContainer.classList.add('gameboard-container');
+  userGameboardContainer.classList.add('user');
+  gameContainer.appendChild(userGameboardContainer);
+
+  let userGameboard = game.user.board;
+  for (let i = 0; i < userGameboard.board.length; i++) {
+    let cell = document.createElement('div');
+    cell.classList.add('gameboard-cell');
+    //rendering ships
+    if (userGameboard.board[i] != null) {
+      cell.classList.add('ship');
+    }
+    cell.id = i;
+    let peg = document.createElement('div');
+    peg.classList.add('peg');
+    cell.appendChild(peg);
+    userGameboardContainer.appendChild(cell);
+  }
+} 
 
 function renderAttack(id) {
   let attackedCell = document.getElementById(id);
   let attackedPeg = attackedCell.querySelector('.peg');
-  if(game.attack(id) === 'hit') {
-    attackedPeg.classList.add('hit');
+
+  //checks if the cell has already been attacked
+  if (attackedPeg.classList.contains('hit') || attackedPeg.classList.contains('miss')) {
+    return;
+  //attacks the cell if not already attacked
   } else {
-    attackedPeg.classList.add('miss');
+    let attackResult = game.attack(id);
+    if(attackResult === 'hit') {
+      attackedPeg.classList.add('hit');
+    } else if (attackResult === 'miss') {
+      attackedPeg.classList.add('miss');
+    }
   }
 
-  if (game.player2.board.allSunk()) {
-    alert('Player 1 wins!');
+  for (let i = 0; i < game.user.board.board.length; i++) {
+    const userGameboard = document.querySelector('.user');
+    const cell = userGameboard.querySelector(`[id="${i}"]`);
+    const peg = cell.querySelector('.peg');
+    if (game.user.board.board[i] != null) {
+      if (game.user.board.board[i] === 'miss') {
+        peg.classList.add('miss');
+      } else if (game.user.board.board[i].hit.includes(i)) {
+        peg.classList.add('hit');
+      }
+    } 
   }
 }
 
 let game = gameController();
 
-renderGameboard();
+renderProgramGameboard();
+renderUserGameboard();
