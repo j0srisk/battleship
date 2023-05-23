@@ -107,22 +107,6 @@ button:focus-visible {
   grid-template-columns: repeat(10, 1fr);
 }
 
-.coordinate-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-.coordinate-cell {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-  margin: 2px;
-}
-
 .gameboard-container.player1 .dot {
   background-color: #ad3c34;
 }

@@ -1,13 +1,19 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
 import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
 
 const app = document.querySelector('#app')
 
 const gameContainer = document.createElement('div');
 gameContainer.classList.add('game-container');
 app.appendChild(gameContainer);
+
+const rowLabelContainer = document.createElement('div');
+rowLabelContainer.classList.add('label-container');
+gameContainer.appendChild(rowLabelContainer);
+
+const columnLabelContainer = document.createElement('div');
+columnLabelContainer.classList.add('label-container');
+gameContainer.appendChild(columnLabelContainer);
 
 const player1GameboardContainer = document.createElement('div');
 player1GameboardContainer.classList.add('gameboard-container');
