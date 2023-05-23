@@ -7,6 +7,7 @@ const gameController = () => {
     const user = playerFactory('user', 'User');
     const program = playerFactory('program', 'Program');
 
+    const winner = null
     
 
     //place ships
@@ -39,7 +40,6 @@ const gameController = () => {
 
     const counterAttack = () => {
         let counterAttackPosition = Math.floor(Math.random() * 100);
-        console.log(counterAttacks)
         while (counterAttacks.includes(counterAttackPosition)) {
             console.log("loop")
             counterAttackPosition = Math.floor(Math.random() * 100);
@@ -48,16 +48,7 @@ const gameController = () => {
         user.board.receiveAttack(counterAttackPosition);
     };
 
-    //check if all ships are sunk and declare winner
-    const checkWinner = () => {
-        if (user.board.allSunk()) {
-            return 'Program';
-        } else if (program.board.allSunk()) {
-            return 'User';
-        }   
-    };
-
-    return { user, program, attack, checkWinner }
+    return { user, program, winner, attack  }
 }
 
 export default gameController;
