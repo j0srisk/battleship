@@ -66,6 +66,11 @@ function renderAttack(id) {
   let attackedCell = document.getElementById(id);
   let attackedPeg = attackedCell.querySelector('.peg');
 
+  if (game.winner() != null) {
+    console.log(game.winner());
+    return;
+  }
+
   if (attackedPeg.classList.contains('hit') || attackedPeg.classList.contains('miss')) {
     return;
   }
@@ -73,7 +78,15 @@ function renderAttack(id) {
   game.attack(id);
 
   updateBoard(game.program.board, 'program');
+  if (game.winner() != null) {
+    console.log(game.winner());
+    return;
+  }
   updateBoard(game.user.board, 'user');
+  if (game.winner() != null) {
+    console.log(game.winner());
+    return;
+  }
 }
 
 let game = gameController();

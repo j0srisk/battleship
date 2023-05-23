@@ -7,8 +7,15 @@ const gameController = () => {
     const user = playerFactory('user', 'User');
     const program = playerFactory('program', 'Program');
 
-    const winner = null
-    
+    const winner = () => {
+        if (user.board.allSunk()) {
+            return 'Program';
+        } else if (program.board.allSunk()) {
+            return 'User';
+        } else {
+            return null;
+        }
+    };
 
     //place ships
     user.board.placeShip(user.ships[0], 0, 'horizontal');
