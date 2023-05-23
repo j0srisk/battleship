@@ -3,22 +3,33 @@ import javascriptLogo from './javascript.svg'
 import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.js'
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+const app = document.querySelector('#app')
 
-setupCounter(document.querySelector('#counter'))
+const gameContainer = document.createElement('div');
+gameContainer.classList.add('game-container');
+app.appendChild(gameContainer);
+
+const player1GameboardContainer = document.createElement('div');
+player1GameboardContainer.classList.add('gameboard-container');
+player1GameboardContainer.classList.add('player1');
+gameContainer.appendChild(player1GameboardContainer);
+
+const player2GameboardContainer = document.createElement('div');
+player2GameboardContainer.classList.add('gameboard-container');
+player2GameboardContainer.classList.add('player2');
+gameContainer.appendChild(player2GameboardContainer);
+
+for (let i = 0; i < 100; i++) {
+  const cell = document.createElement('div');
+  const dot = document.createElement('div');
+  cell.classList.add('gameboard-cell');
+  cell.appendChild(dot);
+  dot.classList.add('dot');
+  cell.id = i;
+  cell.addEventListener('click', () => {
+    dot.classList.remove('dot');
+    dot.classList.add('hit');
+  });
+  player1GameboardContainer.appendChild(cell);
+  player2GameboardContainer.appendChild(cell.cloneNode(true));
+}

@@ -95,3 +95,90 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.game-container {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.gameboard-container {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+}
+
+.coordinate-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.coordinate-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  margin: 2px;
+}
+
+.gameboard-container.player1 .dot {
+  background-color: #ad3c34;
+}
+
+.gameboard-container.player1 .gameboard-cell {
+  background-color: #d14b40;
+  border-color: #ad3c34;
+}
+
+.gameboard-container.player2 .dot {
+  background-color: #3e73a6;
+}
+
+.gameboard-container.player2 .gameboard-cell {
+  background-color: #5493c0;
+  border-color: #3e73a6;
+}
+
+.gameboard {
+  border-radius: 2px;
+}
+
+.gameboard-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameboard-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border: 2px solid;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+}
+
+.hit {
+  width: 10px;
+  height: 10px;
+  border: 5px solid #f7df1e;
+  border-radius: 100%;
+  background-color: #aa9814;
+}
+
+.miss {
+  width: 10px;
+  height: 10px;
+  border: 5px solid #ffffff;
+  border-radius: 100%;
+  background-color: #a8a8a8;
+}
