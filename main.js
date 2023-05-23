@@ -1,19 +1,11 @@
 import './style.css'
-import viteLogo from '/vite.svg'
+import gameController from './src/gameController.js'
 
 const app = document.querySelector('#app')
 
 const gameContainer = document.createElement('div');
 gameContainer.classList.add('game-container');
 app.appendChild(gameContainer);
-
-const rowLabelContainer = document.createElement('div');
-rowLabelContainer.classList.add('label-container');
-gameContainer.appendChild(rowLabelContainer);
-
-const columnLabelContainer = document.createElement('div');
-columnLabelContainer.classList.add('label-container');
-gameContainer.appendChild(columnLabelContainer);
 
 const player1GameboardContainer = document.createElement('div');
 player1GameboardContainer.classList.add('gameboard-container');
@@ -25,17 +17,38 @@ player2GameboardContainer.classList.add('gameboard-container');
 player2GameboardContainer.classList.add('player2');
 gameContainer.appendChild(player2GameboardContainer);
 
-for (let i = 0; i < 100; i++) {
-  const cell = document.createElement('div');
-  const dot = document.createElement('div');
-  cell.classList.add('gameboard-cell');
-  cell.appendChild(dot);
-  dot.classList.add('dot');
-  cell.id = i;
-  cell.addEventListener('click', () => {
-    dot.classList.remove('dot');
-    dot.classList.add('hit');
-  });
-  player1GameboardContainer.appendChild(cell);
-  player2GameboardContainer.appendChild(cell.cloneNode(true));
+function renderGameboard() {
+  let player2gameBoard = game.player2.board;
+  for (let i = 0; i < player2gameBoard.board.length; i++) {
+    let cell = document.createElement('div');
+    cell.classList.add('gameboard-cell');
+    // rendering ships
+    // if (player2gameBoard.board[i] != null) {
+    //   cell.classList.add('ship');
+    // }
+    cell.id = i;
+    let peg = document.createElement('div');
+    peg.classList.add('peg');
+    cell.appendChild(peg);
+    player2GameboardContainer.appendChild(cell);
+    cell.onclick = function() {renderAttack(i)};
+  };
 }
+
+function renderAttack(id) {
+  let attackedCell = document.getElementById(id);
+  let attackedPeg = attackedCell.querySelector('.peg');
+  if(game.attack(id) === 'hit') {
+    attackedPeg.classList.add('hit');
+  } else {
+    attackedPeg.classList.add('miss');
+  }
+
+  if (game.player2.board.allSunk()) {
+    alert('Player 1 wins!');
+  }
+}
+
+let game = gameController();
+
+renderGameboard();

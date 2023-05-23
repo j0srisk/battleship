@@ -4,8 +4,8 @@ import playerFactory from './factories/player.js';
 
 const gameController = () => {
     //create players
-    const player1 = playerFactory('Player 1');
-    const player2 = playerFactory('Player 2');
+    const player1 = playerFactory('player1', 'Player 1');
+    const player2 = playerFactory('player2', 'Player 2');
 
     let currentPlayer = player1;
     let otherPlayer = player2;
@@ -25,23 +25,13 @@ const gameController = () => {
 
     //attack
     const attack = (position) => {
-        otherPlayer.board.receiveAttack(position);
-        if (otherPlayer.board.allSunk()) {
-            console.log(`${currentPlayer.name} wins!`);
-        } else {
-            if (currentPlayer === player1) {
-                currentPlayer = player2;
-                otherPlayer = player1;
-            } else {
-                currentPlayer = player1;
-                otherPlayer = player2;
-            }
-        }
+        console.log(otherPlayer.name, position);
+        if (otherPlayer.board.receiveAttack(position)) {
+            return 'hit';
+        };
     };
 
-    return { player1, player2 }
+    return { player1, player2, attack }
 }
 
-let game = gameController();
-
-console.log(game.player1.board);
+export default gameController;

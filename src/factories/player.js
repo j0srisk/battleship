@@ -1,7 +1,8 @@
 import shipFactory from './ship.js';
 import gameboardFactory from './gameboard.js';
 
-const playerFactory = (playerName) => {
+const playerFactory = (playerId, playerName) => {
+    let id = playerId;
     let name = playerName;
     let board = gameboardFactory();
     let ships = [
@@ -12,7 +13,7 @@ const playerFactory = (playerName) => {
         shipFactory(2)
     ];
     
-    return { name, board, ships }
+    return { id, name, board, ships }
 };
 
 export default playerFactory;

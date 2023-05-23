@@ -107,7 +107,11 @@ button:focus-visible {
   grid-template-columns: repeat(10, 1fr);
 }
 
-.gameboard-container.player1 .dot {
+.gameboard-cell.ship {
+  background-color: #6e6e6e !important;
+}
+
+.gameboard-container.player1 .peg {
   background-color: #ad3c34;
 }
 
@@ -116,7 +120,7 @@ button:focus-visible {
   border-color: #ad3c34;
 }
 
-.gameboard-container.player2 .dot {
+.gameboard-container.player2 .peg {
   background-color: #3e73a6;
 }
 
@@ -145,7 +149,7 @@ button:focus-visible {
   border: 2px solid;
 }
 
-.dot {
+.peg {
   width: 10px;
   height: 10px;
   border-radius: 100%;
@@ -154,9 +158,9 @@ button:focus-visible {
 .hit {
   width: 10px;
   height: 10px;
-  border: 5px solid #f7df1e;
+  border: 5px solid #d14b40;
   border-radius: 100%;
-  background-color: #aa9814;
+  background-color: #ad3c34 !important;
 }
 
 .miss {
@@ -164,5 +168,5 @@ button:focus-visible {
   height: 10px;
   border: 5px solid #ffffff;
   border-radius: 100%;
-  background-color: #a8a8a8;
+  background-color: #a8a8a8 !important;
 }

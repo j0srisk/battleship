@@ -16,6 +16,7 @@ const gameboardFactory = () => {
     const receiveAttack = (position) => {
         if (board[position] !== null) {
             board[position].hitShip(position);
+            return 'hit';
         } else {
             board[position] = 'miss';
         }
