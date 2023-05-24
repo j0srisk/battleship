@@ -42,11 +42,7 @@ const gameController = () => {
             }
         } else if (orientation === 'vertical') {
             //check if ship is out of bounds
-            console.log(position + (ship.length * 10));
             if (position + (ship.length * 10) > 109) {
-                console.log(position)
-                console.log('out of bounds');
-                console.log(position + (ship.length * 10));
                 return false;
             } else {
                 //check if ship overlaps with another ship

@@ -5,6 +5,7 @@ const gameUI = (currentGame) => {
 
     let orientation = 'horizontal';
 
+
     const app = document.querySelector('#app')
     app.innerHTML = '';
 
@@ -13,20 +14,7 @@ const gameUI = (currentGame) => {
     statusText.textContent = 'Place your ships!';
     app.appendChild(statusText);
 
-    const orientationButton = document.createElement('button');
-    orientationButton.classList.add('orientation-button');
-    orientationButton.textContent = 'Rotate';
-    orientationButton.onclick = function() {
-        if (orientation === 'horizontal') {
-            orientation = 'vertical';
-        } else {
-            orientation = 'horizontal';
-        }
-
-        console.log(orientation)
-    }
-    app.appendChild(orientationButton);
-
+    
     let playAgainButton = document.createElement('button');
     playAgainButton.classList.add('play-again-button');
     playAgainButton.textContent = 'Play Again';
@@ -117,86 +105,56 @@ const gameUI = (currentGame) => {
             let cell = document.getElementById(i);
             cell.onmouseover = function() {
                 let selectedId = i;
+                let multiplyer = 1;
+                //resets all cells to default
+                for (let i = 0; i < board.board.length; i++) {
+                    let cell = document.getElementById(i);
+                    cell.classList.remove('hover');
+                    cell.classList.remove('invalid');
+                }
 
-                //horizontal
+                //finds closest valid cell id to selected cell
                 if (orientation === 'horizontal') {
                     if (selectedId % 10 + ship.length > 10) {
                         selectedId = selectedId - (selectedId % 10 + ship.length - 10);
                     }
-                    //removes hover class from all cells
-                    for (let i = 0; i < board.board.length; i++) {
-                        let cell = document.getElementById(i);
-                        cell.classList.remove('hover');
-                        cell.classList.remove('invalid');
-                    }
-                    //adds hover class to cells that the ship can be placed on
-                    for (let j = selectedId; j < selectedId + ship.length; j++) {
-                        //adds invalid class to cells that the ship cannot be placed on
-                        let cell = document.getElementById(j);
-                        if (game.checkShipPlacement(board, ship, selectedId, 'horizontal') === false) {
-                            cell.classList.add('invalid');
-                        } else {
-                            cell.classList.add('hover');
-                        }
-                    }
-        
-                    cell.onclick = function() {
-                        if (game.checkShipPlacement(board, ship, selectedId, 'horizontal')) {
-                            console.log(game.checkShipPlacement(board, ship, selectedId, 'horizontal'));
-                            board.placeShip(ship, selectedId, 'horizontal');
-                            for (let j = selectedId; j < selectedId + ship.length; j++) {
-                                let cell = document.getElementById(j);
-                                cell.classList.remove('hover');
-                                cell.classList.add('ship');
-                            }
-                            for (let i = 0; i < board.board.length; i++) {
-                                let cell = document.getElementById(i);
-                                cell.onmouseover = null;
-                                cell.onclick = null;
-                            }
-                            callback(); // Call the callback function after placing the ship
-                        }
-                    }
-
-                // vertical
-                } else {
+                    multiplyer = 1
+                }
+                else if (orientation === 'vertical') {
                     if (selectedId + (ship.length - 1) * 10 > 99) {
-                        //highest valid id for the ship
                         selectedId = (99 - (ship.length - 1) * 10) - (9 - (selectedId % 10));
                     }
-                    //removes hover class from all cells
-                    for (let i = 0; i < board.board.length; i++) {
-                        let cell = document.getElementById(i);
-                        cell.classList.remove('hover');
-                        cell.classList.remove('invalid');
-                    }
+                    multiplyer = 10
+                }
 
-                    //adds hover class to cells that the ship can be placed on
-                    for (let j = selectedId; j < selectedId + ship.length * 10; j += 10) {
-                        //adds invalid class to cells that the ship cannot be placed on
-                        let cell = document.getElementById(j);
-                        if (game.checkShipPlacement(board, ship, selectedId, 'vertical') === false) {
-                            cell.classList.add('invalid');
-                        } else {
-                            cell.classList.add('hover');
-                        }
+                //adds hover class to cells that ship will be placed on
+                //adds invalid class to cells that ship cannot be placed on
+                for (let j = selectedId; j < selectedId + ship.length * multiplyer; j += multiplyer) {
+                    let cell = document.getElementById(j);
+                    if (game.checkShipPlacement(board, ship, selectedId, orientation) === false) {
+                        cell.classList.add('invalid');
+                    } else {
+                        cell.classList.add('hover');
                     }
+                }
 
-                    cell.onclick = function() {
-                        if (game.checkShipPlacement(board, ship, selectedId, 'vertical')) {
-                            board.placeShip(ship, selectedId, 'vertical');
-                            for (let j = selectedId; j < selectedId + ship.length * 10; j += 10) {
-                                let cell = document.getElementById(j);
+                //places the ship on the board when clicked if position is valid
+                cell.onclick = function() {
+                    if (game.checkShipPlacement(board, ship, selectedId, orientation)) {
+                        board.placeShip(ship, selectedId, orientation);
+                        for (let i = 0; i < board.board.length; i++) {
+                            let cell = document.getElementById(i);
+                            //removes hover class from all cells and renders ship on board
+                            if (board.board[i] != null) {
                                 cell.classList.remove('hover');
                                 cell.classList.add('ship');
                             }
-                            for (let i = 0; i < board.board.length; i++) {
-                                let cell = document.getElementById(i);
-                                cell.onmouseover = null;
-                                cell.onclick = null;
-                            }
-                            callback(); // Call the callback function after placing the ship
+                            cell.onmouseover = null;
+                            cell.onclick = null;
                         }
+                    
+                        callback();
+                        
                     }
                 }
             }
@@ -207,27 +165,8 @@ const gameUI = (currentGame) => {
     function renderUserGameboard() {
         const userGameboardContainer = createGameboardContainer(game.user.board, 'user');
         gameContainer.appendChild(userGameboardContainer);
-    
-        let shipIndex = 0;
-        function placeNextShip() {
-            if (shipIndex > game.user.ships.length - 1) {
-                statusText.textContent = 'Time to attack!'
-                orientationButton.style.display = 'none';
-                renderProgramGameboard();
-                return;
-            }
-            if (shipIndex < game.user.ships.length) {
-                const ship = game.user.ships[shipIndex];
-                if (ship.placed === false) {
-                    getShipPlacement(ship, game.user.board, placeNextShip);
-                    shipIndex++;
-                } else {
-                    placeNextShip(); // Move to the next ship if the current ship is already placed
-                }
-            }
-        }
-    
-        placeNextShip(); // Start placing the ships
+
+        placeShips(game.user);
     }
     
 
@@ -278,6 +217,46 @@ const gameUI = (currentGame) => {
         return;
     }
     }
+
+    function placeShips(player) {
+
+        const orientationButton = document.createElement('button');
+        orientationButton.classList.add('orientation-button');
+        orientationButton.textContent = 'Rotate';
+        orientationButton.onclick = function() {
+            if (orientation === 'horizontal') {
+                orientation = 'vertical';
+            } else {
+                orientation = 'horizontal';
+            }
+        }
+
+        app.appendChild(orientationButton);
+
+        let shipIndex = 0;
+        function placeNextShip() {
+            if (shipIndex > player.ships.length - 1) {
+                statusText.textContent = 'Time to attack!'
+                orientationButton.style.display = 'none';
+                renderProgramGameboard();
+                return;
+            }
+            if (shipIndex < player.ships.length) {
+                const ship = player.ships[shipIndex];
+                if (ship.placed === false) {
+                    getShipPlacement(ship, player.board, placeNextShip);
+                    shipIndex++;
+                } else {
+                    placeNextShip(); // Move to the next ship if the current ship is already placed
+                }
+            }
+        }
+    
+        placeNextShip(); // Start placing the ships
+
+        
+    }
+
 
     renderUserGameboard();
 }
