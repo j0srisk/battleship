@@ -1,12 +1,14 @@
-const shipFactory = (length) => {
+const shipFactory = (length, shipName) => {
+  const name = shipName;
   let hit = [];
+  let placed = false;
   const hitShip = (position) => {
     hit.push(position);
   };
   const isSunk = () => {
     return hit.length === length;
   };
-  return { length, hit, hitShip, isSunk };
+  return { length, name, hit, placed, hitShip, isSunk };
 };
 
 

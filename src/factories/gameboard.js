@@ -5,10 +5,12 @@ const gameboardFactory = () => {
         if (direction === 'horizontal') {
             for (let i = 0; i < ship.length; i++) {
                 board[position + i] = ship;
+                ship.placed = true;
             }
         } else if (direction === 'vertical') {
             for (let i = 0; i < ship.length; i++) {
                 board[position + i * 10] = ship;
+                ship.placed = true;
             }
         }
     };

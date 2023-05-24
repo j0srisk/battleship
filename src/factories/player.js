@@ -6,11 +6,11 @@ const playerFactory = (playerId, playerName) => {
     let name = playerName;
     let board = gameboardFactory();
     let ships = [
-        shipFactory(5),
-        shipFactory(4),
-        shipFactory(3),
-        shipFactory(3),
-        shipFactory(2)
+        shipFactory(5, 'Carrier'),
+        shipFactory(4, 'Battleship'),
+        shipFactory(3, 'Destroyer'),
+        shipFactory(3, 'Submarine'),
+        shipFactory(2, 'Patrol Boat')
     ];
     
     return { id, name, board, ships }

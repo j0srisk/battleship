@@ -185,3 +185,11 @@ button:focus-visible {
   border-radius: 100%;
   background-color: #a8a8a8 !important;
 }
+
+.hover {
+  background-color: #15ff00 !important;
+}
+
+.invalid {
+  background-color: #ff0000 !important;
+}

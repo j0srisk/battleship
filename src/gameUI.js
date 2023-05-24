@@ -6,9 +6,16 @@ const gameUI = (currentGame) => {
     const app = document.querySelector('#app')
     app.innerHTML = '';
 
+    const statusText = document.createElement('h2');
+    statusText.classList.add('status-text');
+    statusText.textContent = 'Place your ships!';
+    app.appendChild(statusText);
+
     const gameContainer = document.createElement('div');
     gameContainer.classList.add('game-container');
     app.appendChild(gameContainer);
+
+    
 
     function createGameboardContainer(board, className) {
         const gameboardContainer = document.createElement('div');
@@ -35,7 +42,7 @@ const gameUI = (currentGame) => {
     function renderProgramGameboard() {
         const programGameboardContainer = createGameboardContainer(game.program.board, 'program');
         //gets the first child of the gameContainer div
-        gameContainer.appendChild(programGameboardContainer);
+        gameContainer.insertBefore(programGameboardContainer, gameContainer.children[0]);
 
         for (let i = 0; i < programGameboardContainer.children[0].children.length; i++) {
             let cell = programGameboardContainer.children[0].children[i];
@@ -44,37 +51,97 @@ const gameUI = (currentGame) => {
         
     }
 
-    function renderUserGameboard() {
-        const userGameboardContainer = createGameboardContainer(game.user.board, 'user');
-        gameContainer.appendChild(userGameboardContainer);
+    function getShipPlacement(ship, board, callback) {
+        statusText.textContent = `Place your ${ship.name}!`;
 
-        for (let i = 0; i < userGameboardContainer.children[0].children.length; i++) {
-            let cell = userGameboardContainer.children[0].children[i];
-            if (game.user.board.board[i] != null) {
-                cell.classList.add('ship');
-                if (game.user.board.board[i].hit[0] === i) {
-                    cell.classList.add('top');
+        for (let i = 0; i < board.board.length; i++) {
+            let cell = document.getElementById(i);
+            cell.onmouseover = function() {
+                let selectedId = i;
+                if (selectedId % 10 + ship.length > 10) {
+                    selectedId = selectedId - (selectedId % 10 + ship.length - 10);
+                }
+                //removes hover class from all cells
+                for (let i = 0; i < board.board.length; i++) {
+                    let cell = document.getElementById(i);
+                    cell.classList.remove('hover');
+                    cell.classList.remove('invalid');
+                }
+                //adds hover class to cells that the ship can be placed on
+                for (let j = selectedId; j < selectedId + ship.length; j++) {
+                    //adds invalid class to cells that the ship cannot be placed on
+                    let cell = document.getElementById(j);
+                    if (game.checkShipPlacement(board, ship, selectedId, 'horizontal') === false) {
+                        cell.classList.add('invalid');
+                    } else {
+                        cell.classList.add('hover');
+                    }
+                }
+    
+                cell.onclick = function() {
+                    if (game.checkShipPlacement(board, ship, selectedId, 'horizontal')) {
+                        console.log(game.checkShipPlacement(board, ship, selectedId, 'horizontal'));
+                        board.placeShip(ship, selectedId, 'horizontal');
+                        for (let j = selectedId; j < selectedId + ship.length; j++) {
+                            let cell = document.getElementById(j);
+                            cell.classList.remove('hover');
+                            cell.classList.add('ship');
+                        }
+                        for (let i = 0; i < board.board.length; i++) {
+                            let cell = document.getElementById(i);
+                            cell.onmouseover = null;
+                            cell.onclick = null;
+                        }
+                        callback(); // Call the callback function after placing the ship
+                    }
                 }
             }
         }
     }
-
-    function updateBoard(board, className) {
-    for (let i = 0; i < board.board.length; i++) {
-        let gameboard = document.querySelector(`.${className}`);
-        let cell = gameboard.querySelector(`[id="${i}"]`);
-        let peg = cell.querySelector('.peg');
-        if (board.board[i] != null) {
-        if (board.board[i] === 'miss') {
-            peg.classList.add('miss');
-        } else if (board.board[i].hit.includes(i)) {
-            peg.classList.add('hit');
-            if (board.board[i].isSunk()) {
-                cell.classList.add('ship');
+    
+    
+    function renderUserGameboard() {
+        const userGameboardContainer = createGameboardContainer(game.user.board, 'user');
+        gameContainer.appendChild(userGameboardContainer);
+    
+        let shipIndex = 0;
+        function placeNextShip() {
+            if (shipIndex > game.user.ships.length - 1) {
+                statusText.textContent = 'Time to attack!'
+                renderProgramGameboard();
+                return;
+            }
+            if (shipIndex < game.user.ships.length) {
+                const ship = game.user.ships[shipIndex];
+                if (ship.placed === false) {
+                    getShipPlacement(ship, game.user.board, placeNextShip);
+                    shipIndex++;
+                } else {
+                    placeNextShip(); // Move to the next ship if the current ship is already placed
+                }
             }
         }
-        }
+    
+        placeNextShip(); // Start placing the ships
     }
+    
+
+    function updateBoard(board, className) {
+        for (let i = 0; i < board.board.length; i++) {
+            let gameboard = document.querySelector(`.${className}`);
+            let cell = gameboard.querySelector(`[id="${i}"]`);
+            let peg = cell.querySelector('.peg');
+            if (board.board[i] != null) {
+                if (board.board[i] === 'miss') {
+                    peg.classList.add('miss');
+                } else if (board.board[i].hit.includes(i)) {
+                    peg.classList.add('hit');
+                    if (board.board[i].isSunk()) {
+                        cell.classList.add('ship');
+                    }
+                }
+            }
+        }
     }
 
     function renderAttack(id) {
@@ -128,7 +195,6 @@ const gameUI = (currentGame) => {
         }
     }
 
-    renderProgramGameboard();
     renderUserGameboard();
 }
 
