@@ -56,7 +56,6 @@ const gameController = () => {
         return true;
     };
 
-    //place ships
     randomShipPlacement(user.board, user.ships[0]);
     randomShipPlacement(user.board, user.ships[1]);
     randomShipPlacement(user.board, user.ships[2]);
@@ -69,13 +68,6 @@ const gameController = () => {
     randomShipPlacement(program.board, program.ships[3]);
     randomShipPlacement(program.board, program.ships[4]);
 
-    // program.board.placeShip(program.ships[0], 0, 'horizontal');
-    // program.board.placeShip(program.ships[1], 10, 'horizontal');
-    // program.board.placeShip(program.ships[2], 20, 'horizontal');
-    // program.board.placeShip(program.ships[3], 30, 'horizontal');
-    // program.board.placeShip(program.ships[4], 40, 'horizontal');
-
-    //attack
     const attack = (position) => {
         const attackResult = program.board.receiveAttack(position);
 
