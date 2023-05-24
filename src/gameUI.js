@@ -73,6 +73,7 @@ const gameUI = (currentGame) => {
 
         const gameboard = document.createElement('div');
         gameboard.classList.add('gameboard');
+        gameboard.classList.add(className);
 
         horizontalWrapper.appendChild(gameboard);
 
@@ -96,8 +97,11 @@ const gameUI = (currentGame) => {
         //gets the first child of the gameContainer div
         gameContainer.insertBefore(programGameboardContainer, gameContainer.children[0]);
 
-        for (let i = 0; i < programGameboardContainer.children[0].children.length; i++) {
-            let cell = programGameboardContainer.children[0].children[i];
+        //selects div with class gameboard and class program
+        const programGameboard = document.querySelector('.gameboard.program');
+
+        for (let i = 0; i < programGameboard.children.length; i++) {
+            let cell = programGameboardContainer.children[1].children[1].children[i];
             cell.onclick = function() {renderAttack(i)}
         }
         
@@ -152,7 +156,10 @@ const gameUI = (currentGame) => {
 
                 // vertical
                 } else {
-                    console.log('vertical');
+                    if (selectedId + (ship.length - 1) * 10 > 99) {
+                        //highest valid id for the ship
+                        console.log((99 - (ship.length - 1) * 10) - (9 - (selectedId % 10)));
+                    }
                 }
             }
         }
@@ -232,30 +239,6 @@ const gameUI = (currentGame) => {
         app.appendChild(playAgainButton);
         return;
     }
-    }
-
-    function displayWinner() {
-        app.innerHTML = '';
-        let winner = game.winner();
-        let winnerDisplay = document.createElement('div');
-        winnerDisplay.classList.add('winner-display');
-        console.log(winner);
-        if (winner === 'User') {
-            winnerDisplay.textContent = `${game.user.name} wins!`;
-        } else if (winner === 'Program') {
-            winnerDisplay.textContent = 'Computer wins!';
-        }
-        app.appendChild(winnerDisplay);
-        let playAgainButton = document.createElement('button');
-        playAgainButton.classList.add('play-again-button');
-        playAgainButton.textContent = 'Play Again';
-        app.appendChild(playAgainButton);
-        playAgainButton.onclick = function() {
-            const playerName = game.user.name;
-            game = gameController();
-            game.user.name = playerName;
-            gameUI(game);
-        }
     }
 
     renderUserGameboard();

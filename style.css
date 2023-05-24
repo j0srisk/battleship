@@ -110,9 +110,9 @@ button:focus-visible {
 }
 
 .gameboard-container.program {
-  background-color: #ad3c34;
-  border-color: #d14b40;
-  color: #d14b40;
+  background-color: #d14b40;
+  border-color: #ad3c34;
+  color: #ad3c34;
 }
 
 .gameboard-container.user {
