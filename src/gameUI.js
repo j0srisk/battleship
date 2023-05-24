@@ -11,6 +11,29 @@ const gameUI = (currentGame) => {
     statusText.textContent = 'Place your ships!';
     app.appendChild(statusText);
 
+    const orientationButton = document.createElement('button');
+    orientationButton.classList.add('orientation-button');
+    orientationButton.textContent = 'Vertical';
+    orientationButton.onclick = function() {
+        if (orientationButton.textContent === 'Horizontal') {
+            orientationButton.textContent = 'Vertical';
+        } else {
+            orientationButton.textContent = 'Horizontal';
+        }
+    }
+    app.appendChild(orientationButton);
+
+    let playAgainButton = document.createElement('button');
+    playAgainButton.classList.add('play-again-button');
+    playAgainButton.textContent = 'Play Again';
+    playAgainButton.onclick = function() {
+        const userName = game.user.name;
+        game = gameController();
+        game.user.name = userName;
+        gameUI(game);
+    }
+
+
     const gameContainer = document.createElement('div');
     gameContainer.classList.add('game-container');
     app.appendChild(gameContainer);
@@ -53,47 +76,54 @@ const gameUI = (currentGame) => {
 
     function getShipPlacement(ship, board, callback) {
         statusText.textContent = `Place your ${ship.name}!`;
-
         for (let i = 0; i < board.board.length; i++) {
             let cell = document.getElementById(i);
             cell.onmouseover = function() {
                 let selectedId = i;
-                if (selectedId % 10 + ship.length > 10) {
-                    selectedId = selectedId - (selectedId % 10 + ship.length - 10);
-                }
-                //removes hover class from all cells
-                for (let i = 0; i < board.board.length; i++) {
-                    let cell = document.getElementById(i);
-                    cell.classList.remove('hover');
-                    cell.classList.remove('invalid');
-                }
-                //adds hover class to cells that the ship can be placed on
-                for (let j = selectedId; j < selectedId + ship.length; j++) {
-                    //adds invalid class to cells that the ship cannot be placed on
-                    let cell = document.getElementById(j);
-                    if (game.checkShipPlacement(board, ship, selectedId, 'horizontal') === false) {
-                        cell.classList.add('invalid');
-                    } else {
-                        cell.classList.add('hover');
+
+                //horizontal
+                if (orientationButton.textContent === 'Horizontal') {
+                    if (selectedId % 10 + ship.length > 10) {
+                        selectedId = selectedId - (selectedId % 10 + ship.length - 10);
                     }
-                }
-    
-                cell.onclick = function() {
-                    if (game.checkShipPlacement(board, ship, selectedId, 'horizontal')) {
-                        console.log(game.checkShipPlacement(board, ship, selectedId, 'horizontal'));
-                        board.placeShip(ship, selectedId, 'horizontal');
-                        for (let j = selectedId; j < selectedId + ship.length; j++) {
-                            let cell = document.getElementById(j);
-                            cell.classList.remove('hover');
-                            cell.classList.add('ship');
-                        }
-                        for (let i = 0; i < board.board.length; i++) {
-                            let cell = document.getElementById(i);
-                            cell.onmouseover = null;
-                            cell.onclick = null;
-                        }
-                        callback(); // Call the callback function after placing the ship
+                    //removes hover class from all cells
+                    for (let i = 0; i < board.board.length; i++) {
+                        let cell = document.getElementById(i);
+                        cell.classList.remove('hover');
+                        cell.classList.remove('invalid');
                     }
+                    //adds hover class to cells that the ship can be placed on
+                    for (let j = selectedId; j < selectedId + ship.length; j++) {
+                        //adds invalid class to cells that the ship cannot be placed on
+                        let cell = document.getElementById(j);
+                        if (game.checkShipPlacement(board, ship, selectedId, 'horizontal') === false) {
+                            cell.classList.add('invalid');
+                        } else {
+                            cell.classList.add('hover');
+                        }
+                    }
+        
+                    cell.onclick = function() {
+                        if (game.checkShipPlacement(board, ship, selectedId, 'horizontal')) {
+                            console.log(game.checkShipPlacement(board, ship, selectedId, 'horizontal'));
+                            board.placeShip(ship, selectedId, 'horizontal');
+                            for (let j = selectedId; j < selectedId + ship.length; j++) {
+                                let cell = document.getElementById(j);
+                                cell.classList.remove('hover');
+                                cell.classList.add('ship');
+                            }
+                            for (let i = 0; i < board.board.length; i++) {
+                                let cell = document.getElementById(i);
+                                cell.onmouseover = null;
+                                cell.onclick = null;
+                            }
+                            callback(); // Call the callback function after placing the ship
+                        }
+                    }
+
+                // vertical
+                } else {
+                    console.log('vertical');
                 }
             }
         }
@@ -108,6 +138,7 @@ const gameUI = (currentGame) => {
         function placeNextShip() {
             if (shipIndex > game.user.ships.length - 1) {
                 statusText.textContent = 'Time to attack!'
+                orientationButton.style.display = 'none';
                 renderProgramGameboard();
                 return;
             }
@@ -149,7 +180,8 @@ const gameUI = (currentGame) => {
     let attackedPeg = attackedCell.querySelector('.peg');
 
     if (game.winner() != null) {
-        displayWinner();
+        statusText.textContent = 'Game over! ' + game.winner() + ' wins!';
+        app.appendChild(playAgainButton);
         return;
     }
 
@@ -161,12 +193,14 @@ const gameUI = (currentGame) => {
 
     updateBoard(game.program.board, 'program');
     if (game.winner() != null) {
-        displayWinner();
+        statusText.textContent = 'Game over! ' + game.winner() + ' wins!';
+        app.appendChild(playAgainButton);
         return;
     }
     updateBoard(game.user.board, 'user');
     if (game.winner() != null) {
-        displayWinner();
+        statusText.textContent = 'Game over! ' + game.winner() + ' wins!';
+        app.appendChild(playAgainButton);
         return;
     }
     }

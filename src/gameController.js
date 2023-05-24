@@ -9,9 +9,9 @@ const gameController = () => {
 
     const winner = () => {
         if (user.board.allSunk()) {
-            return 'Program';
+            return program.name;
         } else if (program.board.allSunk()) {
-            return 'User';
+            return user.name;
         } else {
             return null;
         }
