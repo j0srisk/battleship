@@ -82,7 +82,7 @@ const gameUI = (currentGame) => {
     let attackedPeg = attackedCell.querySelector('.peg');
 
     if (game.winner() != null) {
-        console.log(game.winner());
+        displayWinner();
         return;
     }
 
@@ -94,14 +94,38 @@ const gameUI = (currentGame) => {
 
     updateBoard(game.program.board, 'program');
     if (game.winner() != null) {
-        console.log(game.winner());
+        displayWinner();
         return;
     }
     updateBoard(game.user.board, 'user');
     if (game.winner() != null) {
-        console.log(game.winner());
+        displayWinner();
         return;
     }
+    }
+
+    function displayWinner() {
+        app.innerHTML = '';
+        let winner = game.winner();
+        let winnerDisplay = document.createElement('div');
+        winnerDisplay.classList.add('winner-display');
+        console.log(winner);
+        if (winner === 'User') {
+            winnerDisplay.textContent = `${game.user.name} wins!`;
+        } else if (winner === 'Program') {
+            winnerDisplay.textContent = 'Computer wins!';
+        }
+        app.appendChild(winnerDisplay);
+        let playAgainButton = document.createElement('button');
+        playAgainButton.classList.add('play-again-button');
+        playAgainButton.textContent = 'Play Again';
+        app.appendChild(playAgainButton);
+        playAgainButton.onclick = function() {
+            const playerName = game.user.name;
+            game = gameController();
+            game.user.name = playerName;
+            gameUI(game);
+        }
     }
 
     renderProgramGameboard();
