@@ -45,9 +45,38 @@ const gameUI = (currentGame) => {
         gameboardContainer.classList.add('gameboard-container');
         gameboardContainer.classList.add(className);
 
+        const xCoordinates = document.createElement('div');
+        xCoordinates.classList.add('coordinates');
+        xCoordinates.classList.add('x');
+        for (let i = 1; i < 11; i++) {
+            let coordinate = document.createElement('div');
+            coordinate.classList.add('coordinate');
+            coordinate.textContent = i;
+            xCoordinates.appendChild(coordinate);
+        }
+        
+        gameboardContainer.appendChild(xCoordinates);
+
+        const yCoordinates = document.createElement('div');
+        yCoordinates.classList.add('coordinates');
+        yCoordinates.classList.add('y');
+        for (let i = 65; i < 75; i++) {
+            let coordinate = document.createElement('div');
+            coordinate.classList.add('coordinate');
+            coordinate.textContent = String.fromCharCode(i);
+            yCoordinates.appendChild(coordinate);
+        }
+
+        const horizontalWrapper = document.createElement('div');
+        horizontalWrapper.classList.add('horizontal-wrapper');
+        horizontalWrapper.appendChild(yCoordinates);
+
         const gameboard = document.createElement('div');
         gameboard.classList.add('gameboard');
-        gameboardContainer.appendChild(gameboard);
+
+        horizontalWrapper.appendChild(gameboard);
+
+        gameboardContainer.appendChild(horizontalWrapper);
 
         for (let i = 0; i < board.board.length; i++) {
             let cell = document.createElement('div');

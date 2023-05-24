@@ -103,7 +103,8 @@ button:focus-visible {
 }
 
 .gameboard-container {
-  padding: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
   border: 2px solid;
   border-radius: 4px;
 }
@@ -111,11 +112,13 @@ button:focus-visible {
 .gameboard-container.program {
   background-color: #ad3c34;
   border-color: #d14b40;
+  color: #d14b40;
 }
 
 .gameboard-container.user {
   background-color: #5493c0;
   border-color: #3e73a6;
+  color: #3e73a6;
 }
 
 .gameboard {
@@ -131,13 +134,6 @@ button:focus-visible {
 .gameboard {
   border-radius: 4px;
   border: 2px solid #484848;
-}
-
-.gameboard-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
 }
 
 .gameboard-cell {
@@ -176,6 +172,7 @@ button:focus-visible {
   border: 5px solid #d14b40 !important;
   border-radius: 100%;
   background-color: #ad3c34 !important;
+  box-shadow: #1a1a1a 0px 0px 5px;
 }
 
 .miss {
@@ -184,6 +181,7 @@ button:focus-visible {
   border: 5px solid #ffffff;
   border-radius: 100%;
   background-color: #a8a8a8 !important;
+  box-shadow: #1a1a1a 0px 0px 5px;
 }
 
 .hover {
@@ -192,4 +190,31 @@ button:focus-visible {
 
 .invalid {
   background-color: #ff0000 !important;
+}
+
+.horizontal-wrapper {
+  display: flex;
+}
+
+.coordinates {
+  display: flex;
+  padding: 2px;
+}
+
+.coordinates.x {
+  justify-content: end;
+}
+
+.coordinates.y{
+  flex-direction: column;
+}
+
+.coordinate {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 54px;
+  height: 54px;
+  font-size: x-large;
 }
