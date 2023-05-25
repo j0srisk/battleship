@@ -7,6 +7,9 @@ const gameController = () => {
     const user = playerFactory('user', 'User');
     const program = playerFactory('program', 'Program');
 
+    let attackingPlayer = user;
+    let defendingPlayer = program;
+
     const winner = () => {
         if (user.board.allSunk()) {
             return program.name;
@@ -56,11 +59,11 @@ const gameController = () => {
         return true;
     };
 
-    // randomShipPlacement(user.board, user.ships[0]);
-    // randomShipPlacement(user.board, user.ships[1]);
-    // randomShipPlacement(user.board, user.ships[2]);
-    // randomShipPlacement(user.board, user.ships[3]);
-    // randomShipPlacement(user.board, user.ships[4]);
+    randomShipPlacement(user.board, user.ships[0]);
+    randomShipPlacement(user.board, user.ships[1]);
+    randomShipPlacement(user.board, user.ships[2]);
+    randomShipPlacement(user.board, user.ships[3]);
+    randomShipPlacement(user.board, user.ships[4]);
 
     randomShipPlacement(program.board, program.ships[0]);
     randomShipPlacement(program.board, program.ships[1]);
@@ -92,7 +95,7 @@ const gameController = () => {
         user.board.receiveAttack(counterAttackPosition);
     };
 
-    return { user, program, checkShipPlacement, winner, attack  }
+    return { user, program, attackingPlayer, defendingPlayer, checkShipPlacement, winner, attack  }
 }
 
 export default gameController;

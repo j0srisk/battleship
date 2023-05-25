@@ -1,42 +1,25 @@
-import gameController from './gameController.js'
-
 const gameUI = (currentGame) => {
     let game = currentGame
 
     let orientation = 'horizontal';
-
 
     const app = document.querySelector('#app')
     app.innerHTML = '';
 
     const statusText = document.createElement('h2');
     statusText.classList.add('status-text');
-    statusText.textContent = 'Place your ships!';
     app.appendChild(statusText);
-
-    
-    let playAgainButton = document.createElement('button');
-    playAgainButton.classList.add('play-again-button');
-    playAgainButton.textContent = 'Play Again';
-    playAgainButton.onclick = function() {
-        const userName = game.user.name;
-        game = gameController();
-        game.user.name = userName;
-        gameUI(game);
-    }
-
 
     const gameContainer = document.createElement('div');
     gameContainer.classList.add('game-container');
     app.appendChild(gameContainer);
 
-    
-
-    function createGameboardContainer(board, className) {
+    function createGameboardContainer(player) {
         const gameboardContainer = document.createElement('div');
         gameboardContainer.classList.add('gameboard-container');
-        gameboardContainer.classList.add(className);
+        gameboardContainer.classList.add(player.id);
 
+        //create coordinates
         const xCoordinates = document.createElement('div');
         xCoordinates.classList.add('coordinates');
         xCoordinates.classList.add('x');
@@ -46,9 +29,7 @@ const gameUI = (currentGame) => {
             coordinate.textContent = i;
             xCoordinates.appendChild(coordinate);
         }
-        
         gameboardContainer.appendChild(xCoordinates);
-
         const yCoordinates = document.createElement('div');
         yCoordinates.classList.add('coordinates');
         yCoordinates.classList.add('y');
@@ -58,20 +39,17 @@ const gameUI = (currentGame) => {
             coordinate.textContent = String.fromCharCode(i);
             yCoordinates.appendChild(coordinate);
         }
-
         const horizontalWrapper = document.createElement('div');
         horizontalWrapper.classList.add('horizontal-wrapper');
         horizontalWrapper.appendChild(yCoordinates);
 
+        //creates gameboard
         const gameboard = document.createElement('div');
         gameboard.classList.add('gameboard');
-        gameboard.classList.add(className);
-
+        gameboard.classList.add(player.id);
         horizontalWrapper.appendChild(gameboard);
-
         gameboardContainer.appendChild(horizontalWrapper);
-
-        for (let i = 0; i < board.board.length; i++) {
+        for (let i = 0; i < player.board.board.length; i++) {
             let cell = document.createElement('div');
             cell.classList.add('gameboard-cell');
             cell.id = i;
@@ -84,19 +62,72 @@ const gameUI = (currentGame) => {
         return gameboardContainer;
     }
 
-    function renderProgramGameboard() {
-        const programGameboardContainer = createGameboardContainer(game.program.board, 'program');
-        //gets the first child of the gameContainer div
-        gameContainer.insertBefore(programGameboardContainer, gameContainer.children[0]);
+    function renderGameboards() {
+        const attackingPlayerGameboardContainer = createGameboardContainer(game.attackingPlayer);
+        gameContainer.insertBefore(attackingPlayerGameboardContainer, gameContainer.children[0]);
 
-        //selects div with class gameboard and class program
-        const programGameboard = document.querySelector('.gameboard.program');
+        // //checks if ships have been placed
+        // if (player.ships[0].placed === false) {
+        //     placeShips(player);
+        // }
 
-        for (let i = 0; i < programGameboard.children.length; i++) {
-            let cell = programGameboardContainer.children[1].children[1].children[i];
-            cell.onclick = function() {renderAttack(i)}
+        const defendingPlayerGameboardContainer = createGameboardContainer(game.defendingPlayer);
+        gameContainer.insertBefore(defendingPlayerGameboardContainer, gameContainer.children[0]);
+
+        renderPegs(game.defendingPlayer);
+        renderPegs(game.attackingPlayer);
+
+        for (let i = 0; i < 100; i++) {
+            // adds event listener to each cell on the defending player's gameboard
+            let cell = defendingPlayerGameboardContainer.children[1].children[1].children[i];
+            //might want to add validation to make sure the cell is empty logic here
+            let targetedCell = document.getElementById(i);
+            let targetedPeg = targetedCell.querySelector('.peg');
+
+            cell.addEventListener('click', function () {
+                if (!targetedPeg.classList.contains('hit') && !targetedPeg.classList.contains('miss')) {
+                    game.attack(i);
+                    renderPegs(game.defendingPlayer);
+                    renderPegs(game.attackingPlayer);
+                  }
+                
+                
+            });
+
+            // shows ships to the defending player's gameboard for testing
+            if(game.defendingPlayer.board.board[i] != null || game.defendingPlayer.board.board[i] === 'miss') {
+                cell.classList.add('ship');
+            }
+
+            // shows ships to the attacking player's gameboard
+            cell = attackingPlayerGameboardContainer.children[1].children[1].children[i];
+            if (game.attackingPlayer.board.board[i] != null || game.attackingPlayer.board.board[i] === 'miss') {
+                cell.classList.add('ship');
+            }
         }
-        
+    }
+
+    function renderPegs(player) {
+        for (let i = 0; i < 100; i++) {
+            let gameboard = document.querySelector(`.${player.id}`);
+            let cell = gameboard.querySelector(`[id="${i}"]`);
+            let peg = cell.querySelector('.peg');
+            if (player.board.board[i] != null) {
+                if (player.board.board[i] === 'miss') {
+                    peg.classList.add('miss');
+                } else if (player.board.board[i].hit.includes(i)) {
+                    peg.classList.add('hit');
+                    if (player.board.board[i].isSunk()) {
+                        cell.classList.add('ship');
+                        cell.classList.add('sunk');
+                    }
+                }
+            }
+        }
+
+        if (player.board.allSunk()) {
+            statusText.textContent = `${player.name} wins!`;
+        }
     }
 
     function getShipPlacement(ship, board, callback) {
@@ -160,63 +191,6 @@ const gameUI = (currentGame) => {
             }
         }
     }
-    
-    
-    function renderUserGameboard() {
-        const userGameboardContainer = createGameboardContainer(game.user.board, 'user');
-        gameContainer.appendChild(userGameboardContainer);
-
-        placeShips(game.user);
-    }
-    
-
-    function updateBoard(board, className) {
-        for (let i = 0; i < board.board.length; i++) {
-            let gameboard = document.querySelector(`.${className}`);
-            let cell = gameboard.querySelector(`[id="${i}"]`);
-            let peg = cell.querySelector('.peg');
-            if (board.board[i] != null) {
-                if (board.board[i] === 'miss') {
-                    peg.classList.add('miss');
-                } else if (board.board[i].hit.includes(i)) {
-                    peg.classList.add('hit');
-                    if (board.board[i].isSunk()) {
-                        cell.classList.add('ship');
-                    }
-                }
-            }
-        }
-    }
-
-    function renderAttack(id) {
-    let attackedCell = document.getElementById(id);
-    let attackedPeg = attackedCell.querySelector('.peg');
-
-    if (game.winner() != null) {
-        statusText.textContent = 'Game over! ' + game.winner() + ' wins!';
-        app.appendChild(playAgainButton);
-        return;
-    }
-
-    if (attackedPeg.classList.contains('hit') || attackedPeg.classList.contains('miss')) {
-        return;
-    }
-
-    game.attack(id);
-
-    updateBoard(game.program.board, 'program');
-    if (game.winner() != null) {
-        statusText.textContent = 'Game over! ' + game.winner() + ' wins!';
-        app.appendChild(playAgainButton);
-        return;
-    }
-    updateBoard(game.user.board, 'user');
-    if (game.winner() != null) {
-        statusText.textContent = 'Game over! ' + game.winner() + ' wins!';
-        app.appendChild(playAgainButton);
-        return;
-    }
-    }
 
     function placeShips(player) {
 
@@ -244,6 +218,7 @@ const gameUI = (currentGame) => {
             if (shipIndex < player.ships.length) {
                 const ship = player.ships[shipIndex];
                 if (ship.placed === false) {
+                    statusText.textContent = `Place your ${ship.name}!`;
                     getShipPlacement(ship, player.board, placeNextShip);
                     shipIndex++;
                 } else {
@@ -257,8 +232,7 @@ const gameUI = (currentGame) => {
         
     }
 
-
-    renderUserGameboard();
+    renderGameboards();
 }
 
 export default gameUI;
