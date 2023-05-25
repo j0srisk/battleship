@@ -1,5 +1,9 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Bebas Neue', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -12,6 +16,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --user-primary: #5493c0;
+  --user-secondary: #3e73a6;
+
+  --program-primary: #d14b40;
+  --program-secondary: #ad3c34;
 }
 
 @import url(./fonts/MachineStd.otf);
@@ -29,15 +39,23 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  flex-direction: column;
   min-width: 320px;
   min-height: 100vh;
+  justify-content: space-between;
+}
+
+h1 {
+  margin: 0;
 }
 
 #app {
   max-width: 1280px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
@@ -62,9 +80,9 @@ body {
 }
 
 .gameboard-container.user {
-  background-color: #5493c0;
-  border-color: #3e73a6;
-  color: #3e73a6;
+  background-color: var(--user-primary);
+  border-color: var(--user-secondary);
+  color: var(--user-secondary);
 }
 
 .gameboard {
@@ -182,6 +200,7 @@ body {
   flex-direction: column;
   gap: 1rem;
   align-items: center;
+  width: 100%;
 }
 
 .user-name-label {
@@ -190,33 +209,48 @@ body {
 
 input {
   display: flex;
-  gap: 1rem;
   align-items: center;
   text-align: center;
-  padding: 1rem;
-  border: 2px solid #484848;
+  background-color: #1d1d1d;
+  border: 2px solid #888;
   border-radius: 2px;
+  font-family: Glass_TTY_VT220, sans-serif;
+  color: #15ff00;
+  padding: 0;
+  font-size: x-large;
+  flex-grow: 1;
+  height: 100%;
 }
 
 input:focus {
   outline: none;
-  border-color: #3e73a6;
 }
+
 
 button {
   display: flex;
-  gap: 1rem;
   align-items: center;
-  text-align: center;
-  flex-grow: 1;
+  padding: 0 1rem;
+  height: calc(100% + 4px);
   border: 2px solid #484848;
   border-radius: 2px;
+  font-family: 'Bebas Neue';
+  font-size: x-large;
 }
+
+button:hover {
+  transition: all 0.2s ease-in-out;
+  background-color: var(--user-primary);
+  border-color: var(--user-secondary);
+  cursor: pointer;
+} 
 
 .user-name-input-container {
   display: flex;
   gap: 1rem;
-  align-items: center;;
+  align-items: center;
+  height: 3rem;
+  width: 100%;
 }
 
 .status-container {
@@ -250,4 +284,26 @@ button {
   font-family: Glass_TTY_VT220, sans-serif;
   color: #15ff00;
   width: 30%;
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: .5rem;
+  align-items: center;
+  font-size: 1rem;
+  color: #888;
+  justify-content: center;
+}
+
+.github-link {
+  display: flex;
+}
+
+.github-icon {
+  padding-bottom: 6px;
+  width: 1.5em;
+  height: 1.5em;
+  color: var(--user-primary);
 }
