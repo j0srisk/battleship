@@ -6,9 +6,21 @@ const gameUI = (currentGame) => {
     const app = document.querySelector('#app')
     app.innerHTML = '';
 
+    const gameTitle = document.createElement('h1');
+    gameTitle.classList.add('game-title');
+    gameTitle.textContent = 'Battleship';
+    app.appendChild(gameTitle);
+
+    const statusContainer = document.createElement('div');
+    statusContainer.classList.add('status-container');
+    app.appendChild(statusContainer);
+
+    const targetText = document.createElement('h2');
+    targetText.classList.add('target-text');
+
     const statusText = document.createElement('h2');
     statusText.classList.add('status-text');
-    app.appendChild(statusText);
+    statusContainer.appendChild(statusText);
 
     const gameContainer = document.createElement('div');
     gameContainer.classList.add('game-container');
@@ -47,6 +59,9 @@ const gameUI = (currentGame) => {
         const gameboard = document.createElement('div');
         gameboard.classList.add('gameboard');
         gameboard.classList.add(player.id);
+        gameboard.addEventListener('mouseout', function () { 
+            targetText.textContent = 'Target: Pending';
+        })
         horizontalWrapper.appendChild(gameboard);
         gameboardContainer.appendChild(horizontalWrapper);
         for (let i = 0; i < player.board.board.length; i++) {
@@ -63,45 +78,69 @@ const gameUI = (currentGame) => {
     }
 
     function renderGameboards() {
-        const attackingPlayerGameboardContainer = createGameboardContainer(game.attackingPlayer);
-        gameContainer.insertBefore(attackingPlayerGameboardContainer, gameContainer.children[0]);
+        const userGameboardContainer = createGameboardContainer(game.user);
+        gameContainer.insertBefore(userGameboardContainer, gameContainer.children[0]);
 
-        // //checks if ships have been placed
-        // if (player.ships[0].placed === false) {
-        //     placeShips(player);
-        // }
+        //checks if ships have been placed
+        if (game.user.ships[0].placed === false) {
+            placeShips(game.user);
+        }
 
-        const defendingPlayerGameboardContainer = createGameboardContainer(game.defendingPlayer);
-        gameContainer.insertBefore(defendingPlayerGameboardContainer, gameContainer.children[0]);
-
-        renderPegs(game.defendingPlayer);
-        renderPegs(game.attackingPlayer);
+        const programGameboardContainer = createGameboardContainer(game.program);
+        gameContainer.insertBefore(programGameboardContainer, gameContainer.children[0]);
+        programGameboardContainer.style.display = 'none';
 
         for (let i = 0; i < 100; i++) {
             // adds event listener to each cell on the defending player's gameboard
-            let cell = defendingPlayerGameboardContainer.children[1].children[1].children[i];
+            let cell = programGameboardContainer.children[1].children[1].children[i];
             //might want to add validation to make sure the cell is empty logic here
-            let targetedCell = document.getElementById(i);
+            let targetedCell = cell;
             let targetedPeg = targetedCell.querySelector('.peg');
 
-            cell.addEventListener('click', function () {
-                if (!targetedPeg.classList.contains('hit') && !targetedPeg.classList.contains('miss')) {
-                    game.attack(i);
-                    renderPegs(game.defendingPlayer);
-                    renderPegs(game.attackingPlayer);
-                  }
-                
-                
-            });
+            const mouseOverHandler = function () {
+                let letter = String.fromCharCode(65 + (targetedCell.id / 10));
+                let number = (Math.floor(targetedCell.id % 10) + 1);
+                targetText.textContent = `Target: ${letter}${number}`;
+                programGameboardContainer.children[1].children[1].children[targetedCell.id].classList.add('targeted');
+            }
+
+            const mouseOutHandler = function () {
+                programGameboardContainer.children[1].children[1].children[targetedCell.id].classList.remove('targeted');
+            }
+
+            const clickHandler = function () {
+                // stops the player from attacking if the game is over
+                if (game.winner() != null) {
+                    cell.removeEventListener('click', clickHandler);
+                } else if (!targetedPeg.classList.contains('hit') && !targetedPeg.classList.contains('miss')) {
+                    let attackStatus = game.attack(i);
+                    statusText.textContent = 'Attacking...';
+                    targetedCell.classList.add('firing');
+                    setTimeout(() => {
+                        if (attackStatus === 'miss') {
+                            statusText.textContent = 'Miss!';
+                        } else if (attackStatus === 'hit') {
+                            statusText.textContent = 'Hit!';
+                        }
+                        targetedCell.classList.remove('firing');
+                        renderPegs(game.program);
+                        renderPegs(game.user);
+                    }, 1000);
+                }
+            }
+
+            cell.addEventListener('click', clickHandler);
+            cell.addEventListener('mouseover', mouseOverHandler);
+            cell.addEventListener('mouseout', mouseOutHandler);
 
             // shows ships to the defending player's gameboard for testing
-            if(game.defendingPlayer.board.board[i] != null || game.defendingPlayer.board.board[i] === 'miss') {
+            if(game.program.board.board[i] != null || game.program.board.board[i] === 'miss') {
                 cell.classList.add('ship');
             }
 
             // shows ships to the attacking player's gameboard
-            cell = attackingPlayerGameboardContainer.children[1].children[1].children[i];
-            if (game.attackingPlayer.board.board[i] != null || game.attackingPlayer.board.board[i] === 'miss') {
+            cell = userGameboardContainer.children[1].children[1].children[i];
+            if (game.user.board.board[i] != null || game.user.board.board[i] === 'miss') {
                 cell.classList.add('ship');
             }
         }
@@ -123,23 +162,26 @@ const gameUI = (currentGame) => {
                     }
                 }
             }
-        }
 
-        if (player.board.allSunk()) {
-            statusText.textContent = `${player.name} wins!`;
-        }
+            if (game.winner() != null) {
+                console.log(game.winner())
+                statusText.textContent = `${game.winner()} wins!`;
+            }
+        }       
     }
 
     function getShipPlacement(ship, board, callback) {
         statusText.textContent = `Place your ${ship.name}!`;
         for (let i = 0; i < board.board.length; i++) {
-            let cell = document.getElementById(i);
+            let userGameboard = document.querySelector(`.gameboard.user`);
+            // let cell = document.getElementById(i);
+            let cell = userGameboard.children[i];
             cell.onmouseover = function() {
                 let selectedId = i;
                 let multiplyer = 1;
                 //resets all cells to default
                 for (let i = 0; i < board.board.length; i++) {
-                    let cell = document.getElementById(i);
+                    let cell = userGameboard.children[i];
                     cell.classList.remove('hover');
                     cell.classList.remove('invalid');
                 }
@@ -161,7 +203,8 @@ const gameUI = (currentGame) => {
                 //adds hover class to cells that ship will be placed on
                 //adds invalid class to cells that ship cannot be placed on
                 for (let j = selectedId; j < selectedId + ship.length * multiplyer; j += multiplyer) {
-                    let cell = document.getElementById(j);
+                    //gets cell from user gameboard
+                    let cell = userGameboard.children[j];
                     if (game.checkShipPlacement(board, ship, selectedId, orientation) === false) {
                         cell.classList.add('invalid');
                     } else {
@@ -174,7 +217,7 @@ const gameUI = (currentGame) => {
                     if (game.checkShipPlacement(board, ship, selectedId, orientation)) {
                         board.placeShip(ship, selectedId, orientation);
                         for (let i = 0; i < board.board.length; i++) {
-                            let cell = document.getElementById(i);
+                            let cell = userGameboard.children[i];
                             //removes hover class from all cells and renders ship on board
                             if (board.board[i] != null) {
                                 cell.classList.remove('hover');
@@ -193,10 +236,10 @@ const gameUI = (currentGame) => {
     }
 
     function placeShips(player) {
-
+        console.log(player.ships)
         const orientationButton = document.createElement('button');
         orientationButton.classList.add('orientation-button');
-        orientationButton.textContent = 'Rotate';
+        orientationButton.textContent = 'Change orientation';
         orientationButton.onclick = function() {
             if (orientation === 'horizontal') {
                 orientation = 'vertical';
@@ -205,14 +248,16 @@ const gameUI = (currentGame) => {
             }
         }
 
-        app.appendChild(orientationButton);
+        statusContainer.appendChild(orientationButton);
 
         let shipIndex = 0;
         function placeNextShip() {
             if (shipIndex > player.ships.length - 1) {
                 statusText.textContent = 'Time to attack!'
                 orientationButton.style.display = 'none';
-                renderProgramGameboard();
+                const programGameboardContainer = document.querySelector('.gameboard-container.program');
+                programGameboardContainer.style.display = 'block';
+                statusContainer.appendChild(targetText);
                 return;
             }
             if (shipIndex < player.ships.length) {

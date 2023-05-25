@@ -12,20 +12,28 @@ gameTitle.classList.add('game-title');
 gameTitle.textContent = 'Battleship';
 app.appendChild(gameTitle);
 
+const userInputContainer = document.createElement('div');
+userInputContainer.classList.add('user-input-container');
+app.appendChild(userInputContainer);
+
 const userNameLabel = document.createElement('label');
 userNameLabel.classList.add('user-name-label');
 userNameLabel.textContent = 'Player Name: ';
-app.appendChild(userNameLabel);
+userInputContainer.appendChild(userNameLabel);
+
+const userNameInputContainer = document.createElement('div');
+userNameInputContainer.classList.add('user-name-input-container');
+userInputContainer.appendChild(userNameInputContainer);
 
 const userNameInput = document.createElement('input');
 userNameInput.classList.add('user-name-input');
 userNameInput.value = 'Player 1';
-app.appendChild(userNameInput);
+userNameInputContainer.appendChild(userNameInput);
 
 const startButton = document.createElement('button');
 startButton.classList.add('start-button');
 startButton.textContent = 'Start';
-app.appendChild(startButton);
+userNameInputContainer.appendChild(startButton);
 
 startButton.onclick = function() {
   game.user.name = userNameInput.value;
