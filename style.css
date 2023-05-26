@@ -42,7 +42,7 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 320px;
-  min-height: 100vh;
+  height: 100vh;
   justify-content: space-between;
 }
 
@@ -74,6 +74,8 @@ h2 {
   flex-wrap: wrap;
   gap: 2rem;
   align-items: center;
+  justify-content: center;
+
 }
 
 .gameboard-container {
@@ -201,7 +203,7 @@ h2 {
 
 
 .game-title {
-  font-family: MachineStd, sans-serif;
+  font-family: MachineStd, 'Bebas Neue', sans-serif;
   font-size: 6rem;
 }
 
@@ -211,6 +213,7 @@ h2 {
   gap: 1rem;
   align-items: center;
   width: 100%;
+  flex-grow: 1;
 }
 
 .user-name-label {
@@ -222,9 +225,9 @@ input {
   align-items: center;
   text-align: center;
   background-color: #1d1d1d;
-  border: 2px solid #888;
+  border: 0;
   border-radius: 2px;
-  font-family: Glass_TTY_VT220, sans-serif;
+  font-family: Glass_TTY_VT220, 'Bebas Neue', sans-serif;
   color: #15ff00;
   padding: 0;
   font-size: x-large;
@@ -241,9 +244,9 @@ button {
   display: flex;
   align-items: center;
   padding: 0 1rem;
-  height: calc(100% + 4px);
-  border: 2px solid #484848;
-  border-radius: 2px;
+  height: 100%;
+  border: 0px;
+  border-radius: 4px;
   font-family: 'Bebas Neue';
   font-size: x-large;
 }
@@ -268,17 +271,17 @@ button:hover {
   gap: 2rem;
   align-items: center;
   justify-content: space-between;
-  height: 3rem;
+  height: 2.5rem;
 }
 
 .status-text {
   display: flex;
   align-items: center;
   text-align: center;
-  border: 2px solid #484848;
+  border: 0px;
   background-color: #1d1d1d;
-  border-radius: 2px;
-  font-family: Glass_TTY_VT220, sans-serif;
+  border-radius: 4px;
+  font-family: Glass_TTY_VT220, 'Bebas Neue', sans-serif;
   color: #15ff00;
   flex-grow: 1;
   height: 100%;
@@ -289,11 +292,11 @@ button:hover {
   display: flex;
   align-items: center;
   text-align: center;
-  border: 2px solid #484848;
+  border: 0px;
   background-color: #1d1d1d;
-  border-radius: 2px;
+  border-radius: 4px;
   padding: 0 1rem;
-  font-family: Glass_TTY_VT220, sans-serif;
+  font-family: Glass_TTY_VT220, 'Bebas Neue', sans-serif;
   color: #15ff00;
   width: 30%;
   height: 100%;
@@ -326,4 +329,73 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+@media (pointer: coarse) {
+ .target-text {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  :root{
+    --gameboard-cell-size: 32px;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  :root{
+    --gameboard-cell-size: 26px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  :root{
+    --gameboard-cell-size: 20px;
+  }
+
+  body{
+    max-height: 100dvh;
+  }
+
+  #app{
+    max-width: calc(272px + 14px);
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .game-container {
+    gap: 1rem;
+  }
+
+  .game-title {
+    font-size: 4rem;
+  }
+
+  input{
+    font-size: large;
+  }
+
+  .button {
+    font-size: large;
+  }
+
+  .game-title.main {
+    display: none;
+  }
+
+  .status-container {
+    height: auto;
+    gap: 1rem;
+  }
+
+  .status-text {
+    font-size: large;
+    padding: .25rem;
+    justify-content: center;
+  }
+
+  footer{
+    display: none;
+  }
 }
