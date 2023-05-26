@@ -1,91 +1,98 @@
-import shipFactory from './factories/ship.js';
-import gameboardFactory from './factories/gameboard.js';
-import playerFactory from './factories/player.js';
+import playerFactory from './factories/player';
 
 const gameController = () => {
-    //create players
-    const user = playerFactory('user', 'User');
-    const program = playerFactory('program', 'Program');
+// create players
+  const user = playerFactory('user', 'User');
+  const program = playerFactory('program', 'Program');
 
-    const winner = () => {
-        if (user.board.allSunk()) {
-            return program.name;
-        } else if (program.board.allSunk()) {
-            return user.name;
-        } else {
-            return null;
+  const counterAttacks = [];
+
+  const winner = () => {
+    if (user.board.allSunk()) {
+      return program.name;
+    } if (program.board.allSunk()) {
+      return user.name;
+    }
+    return null;
+  };
+
+  const checkShipPlacement = (board, ship, position, orientation) => {
+    if (orientation === 'horizontal') {
+      // check if ship is out of bounds
+      if ((position % 10) + ship.length > 10) {
+        return false;
+      }
+      // check if ship overlaps with another ship
+      for (let i = 0; i < ship.length; i += 1) {
+        if (board.board[position + i] != null) {
+          return false;
         }
-    };
-
-    const randomShipPlacement = (board, ship) => {
-        let position = Math.floor(Math.random() * 100);
-        let orientation = Math.floor(Math.random() * 2) === 0 ? 'horizontal' : 'vertical';
-        while (!checkShipPlacement(board, ship, position, orientation)) {
-            position = Math.floor(Math.random() * 100);
-            orientation = Math.floor(Math.random() * 2) === 0 ? 'horizontal' : 'vertical';
+      }
+    } else if (orientation === 'vertical') {
+      // check if ship is out of bounds
+      if (position + (ship.length * 10) > 109) {
+        return false;
+      }
+      // check if ship overlaps with another ship
+      for (let i = 0; i < ship.length; i += 1) {
+        if (board.board[position + (i * 10)] != null) {
+          return false;
         }
-        board.placeShip(ship, position, orientation);
-    };
+      }
+    }
+    return true;
+  };
 
-    const checkShipPlacement = (board, ship, position, orientation) => {
-        if (orientation === 'horizontal') {
-            //check if ship is out of bounds
-            if (position % 10 + ship.length > 10) {
-                return false;
-            } else {
-                //check if ship overlaps with another ship
-                for (let i = 0; i < ship.length; i++) {
-                    if (board.board[position + i] != null) {
-                        return false;
-                    }
-                }
-            }
-        } else if (orientation === 'vertical') {
-            //check if ship is out of bounds
-            if (position + (ship.length * 10) > 109) {
-                return false;
-            } else {
-                //check if ship overlaps with another ship
-                for (let i = 0; i < ship.length; i++) {
-                    if (board.board[position + (i * 10)] != null) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    };
+  const randomShipPlacement = (board, ship) => {
+    let position = Math.floor(Math.random() * 100);
+    let orientation = Math.floor(Math.random() * 2) === 0 ? 'horizontal' : 'vertical';
+    while (!checkShipPlacement(board, ship, position, orientation)) {
+      position = Math.floor(Math.random() * 100);
+      orientation = Math.floor(Math.random() * 2) === 0 ? 'horizontal' : 'vertical';
+    }
+    board.placeShip(ship, position, orientation);
+  };
 
-    randomShipPlacement(program.board, program.ships[0]);
-    randomShipPlacement(program.board, program.ships[1]);
-    randomShipPlacement(program.board, program.ships[2]);
-    randomShipPlacement(program.board, program.ships[3]);
-    randomShipPlacement(program.board, program.ships[4]);
+  randomShipPlacement(program.board, program.ships[0]);
+  randomShipPlacement(program.board, program.ships[1]);
+  randomShipPlacement(program.board, program.ships[2]);
+  randomShipPlacement(program.board, program.ships[3]);
+  randomShipPlacement(program.board, program.ships[4]);
 
-    const attack = (position) => {
-        const attackResult = program.board.receiveAttack(position);
+  const counterAttack = () => {
+    let counterAttackPosition = Math.floor(Math.random() * 100);
 
-        if (attackResult === 'hit') {
-            return 'hit';
-        } else if (attackResult === 'miss') {
-            counterAttack();
-            return 'miss';
-        }
-    };
+    while (counterAttacks.includes(counterAttackPosition)) {
+      counterAttackPosition = Math.floor(Math.random() * 100);
+    }
 
-    let counterAttacks = [];
+    counterAttacks.push(counterAttackPosition); // add new position to array
 
-    const counterAttack = () => {
-        let counterAttackPosition = Math.floor(Math.random() * 100);
-        while (counterAttacks.includes(counterAttackPosition)) {
-            console.log("loop")
-            counterAttackPosition = Math.floor(Math.random() * 100);
-        }
-        counterAttacks.push(counterAttackPosition); // add new position to array
-        user.board.receiveAttack(counterAttackPosition);
-    };
+    const attackResult = user.board.receiveAttack(counterAttackPosition);
 
-    return { user, program, checkShipPlacement, winner, attack  }
-}
+    if (attackResult === 'hit') {
+      // Store the hit position and recursively call counterAttack()
+      counterAttacks.push(counterAttackPosition);
+      counterAttack();
+    }
+  };
+
+  const attack = (position) => {
+    const attackResult = program.board.receiveAttack(position);
+
+    if (attackResult === 'hit') {
+      return 'hit';
+    } if (attackResult === 'miss') {
+      counterAttack();
+      return 'miss';
+    }
+
+    return null;
+  };
+
+  return {
+    user, program, checkShipPlacement, winner, attack,
+  };
+};
 
 export default gameController;

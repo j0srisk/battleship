@@ -1,19 +1,21 @@
-import shipFactory from './ship.js';
-import gameboardFactory from './gameboard.js';
+import shipFactory from './ship';
+import gameboardFactory from './gameboard';
 
 const playerFactory = (playerId, playerName) => {
-    let id = playerId;
-    let name = playerName;
-    let board = gameboardFactory();
-    let ships = [
-        shipFactory(5, 'Carrier'),
-        shipFactory(4, 'Battleship'),
-        shipFactory(3, 'Destroyer'),
-        shipFactory(3, 'Submarine'),
-        shipFactory(2, 'Patrol Boat')
-    ];
-    
-    return { id, name, board, ships }
+  const id = playerId;
+  const name = playerName;
+  const board = gameboardFactory();
+  const ships = [
+    shipFactory(5, 'Carrier'),
+    shipFactory(4, 'Battleship'),
+    shipFactory(3, 'Destroyer'),
+    shipFactory(3, 'Submarine'),
+    shipFactory(2, 'Patrol Boat'),
+  ];
+
+  return {
+    id, name, board, ships,
+  };
 };
 
 export default playerFactory;

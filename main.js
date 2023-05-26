@@ -1,13 +1,13 @@
-import './style.css'
+import './style.css';
 import gameController from './src/gameController';
-import gameUI from './src/gameUI'
+import gameUI from './src/gameUI';
 
-let game = gameController();
+const game = gameController();
 
 const startButton = document.querySelector('.user-name-submit');
 const userNameInput = document.querySelector('.user-name-input');
 
-startButton.onclick = function() {
+startButton.onclick = function startGame() {
   game.user.name = userNameInput.value;
   gameUI(game);
-}
+};
