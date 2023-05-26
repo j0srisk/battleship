@@ -92,17 +92,17 @@ const gameUI = (currentGame) => {
         programGameboardContainer.style.display = 'none';
 
         for (let i = 0; i < 100; i++) {
+            // adds event listener to each cell on the defending player's gameboard
             let cell = programGameboardContainer.children[1].children[1].children[i];
             let targetedCell = cell;
             let targetedPeg = targetedCell.querySelector('.peg');
-
             cell.onclick = clickHandler(targetedCell);
             cell.onmouseover = mouseOverHandler(targetedCell);
 
-            // // shows ships to the defending player's gameboard for testing
-            // if(game.program.board.board[i] != null || game.program.board.board[i] === 'miss') {
-            //     cell.classList.add('ship');
-            // }
+            // shows ships to the defending player's gameboard for testing
+            if(game.program.board.board[i] != null || game.program.board.board[i] === 'miss') {
+                cell.classList.add('ship');
+            }
 
             // shows ships to the attacking player's gameboard
             cell = userGameboardContainer.children[1].children[1].children[i];
@@ -168,10 +168,8 @@ const gameUI = (currentGame) => {
             if (player.board.board[i] != null) {
                 if (player.board.board[i] === 'miss') {
                     console.log('miss')
-                    console.log('miss')
                     peg.classList.add('miss');
-                } else if (player.board.board[i].hit.includes(String(String(i)))) {
-                    console.log('hit')
+                } else if (player.board.board[i].hit.includes(String(i))) {
                     console.log('hit')
                     peg.classList.add('hit');
                     if (player.board.board[i].isSunk()) {
@@ -183,7 +181,7 @@ const gameUI = (currentGame) => {
 
             if (game.winner() != null) {
                 console.log(game.winner())
-                statusText.textContent = `Game Over! Game Over! ${game.winner()} wins!`;
+                statusText.textContent = `Game Over! ${game.winner()} wins!`;
             }
         }       
     }
@@ -191,15 +189,7 @@ const gameUI = (currentGame) => {
     function getShipPlacement(ship, board, callback) {
         statusText.textContent = `Place your ${ship.name}!`;
         let userGameboard = document.querySelector(`.gameboard.user`);
-        let userGameboard = document.querySelector(`.gameboard.user`);
         for (let i = 0; i < board.board.length; i++) {
-            userGameboard.onmouseleave = function() {
-                for (let i = 0; i < board.board.length; i++) {
-                    let cell = userGameboard.children[i];
-                    cell.classList.remove('hover');
-                    cell.classList.remove('invalid');
-                }
-            }
             userGameboard.onmouseleave = function() {
                 for (let i = 0; i < board.board.length; i++) {
                     let cell = userGameboard.children[i];
