@@ -23,6 +23,8 @@
   --program-secondary: #ad3c34;
 
   --gameboard-cell-size: 48px;
+
+  --gameboard-cell-size: 48px;
 }
 
 @import url(./fonts/MachineStd.otf);
