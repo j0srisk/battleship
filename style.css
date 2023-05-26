@@ -4,7 +4,6 @@
 
 :root {
   font-family: 'Bebas Neue', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
@@ -22,6 +21,8 @@
 
   --program-primary: #d14b40;
   --program-secondary: #ad3c34;
+
+  --gameboard-cell-size: 48px;
 }
 
 @import url(./fonts/MachineStd.otf);
@@ -47,6 +48,12 @@ body {
 
 h1 {
   margin: 0;
+  line-height: 3rem;
+}
+
+h2 {
+  padding: 0;
+  margin: 0;
 }
 
 #app {
@@ -55,13 +62,16 @@ h1 {
   flex-direction: column;
   flex-grow: 1;
   justify-content: center;
+  gap: 2rem;
   margin: 0 auto;
+  padding: 0 2rem;
   text-align: center;
 }
 
 
 .game-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   align-items: center;
 }
@@ -107,8 +117,8 @@ h1 {
   justify-content: center;
   align-items: center;
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: var(--gameboard-cell-size);
+  height: var(--gameboard-cell-size);
   border: 2px solid;
 }
 
@@ -183,8 +193,8 @@ h1 {
   justify-content: center;
   align-items: center;
   position: relative;
-  width: 54px;
-  height: 54px;
+  width: calc(var(--gameboard-cell-size) + 4px);
+  height: calc(var(--gameboard-cell-size) + 4px);
   font-size: x-large;
   flex-shrink: 0;
 }
@@ -255,35 +265,38 @@ button:hover {
 
 .status-container {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   align-items: center;
   justify-content: space-between;
+  height: 3rem;
 }
 
 .status-text {
   display: flex;
   align-items: center;
   text-align: center;
-  padding: .5rem;
   border: 2px solid #484848;
   background-color: #1d1d1d;
   border-radius: 2px;
   font-family: Glass_TTY_VT220, sans-serif;
   color: #15ff00;
-  width: 100%;
+  flex-grow: 1;
+  height: 100%;
+  padding: 0 1rem;
 }
 
 .target-text {
   display: flex;
   align-items: center;
   text-align: center;
-  padding: .5rem;
   border: 2px solid #484848;
   background-color: #1d1d1d;
   border-radius: 2px;
+  padding: 0 1rem;
   font-family: Glass_TTY_VT220, sans-serif;
   color: #15ff00;
   width: 30%;
+  height: 100%;
 }
 
 footer {
@@ -306,4 +319,11 @@ footer {
   width: 1.5em;
   height: 1.5em;
   color: var(--user-primary);
+}
+
+.start-menu-container {
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }

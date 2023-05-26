@@ -97,41 +97,57 @@ const gameUI = (currentGame) => {
             let targetedCell = cell;
             let targetedPeg = targetedCell.querySelector('.peg');
 
-            const mouseOverHandler = function () {
-                let letter = String.fromCharCode(65 + (targetedCell.id / 10));
-                let number = (Math.floor(targetedCell.id % 10) + 1);
-                targetText.textContent = `Target: ${letter}${number}`;
-                programGameboardContainer.children[1].children[1].children[targetedCell.id].classList.add('targeted');
-            }
+            // const mouseOverHandler = function () {
+            //     let letter = String.fromCharCode(65 + (targetedCell.id / 10));
+            //     let number = (Math.floor(targetedCell.id % 10) + 1);
+            //     targetText.textContent = `Target: ${letter}${number}`;
+            //     programGameboardContainer.children[1].children[1].children[targetedCell.id].classList.add('targeted');
+            // }
 
-            const mouseOutHandler = function () {
-                programGameboardContainer.children[1].children[1].children[targetedCell.id].classList.remove('targeted');
-            }
+            // const mouseOutHandler = function () {
+            //     programGameboardContainer.children[1].children[1].children[targetedCell.id].classList.remove('targeted');
+            // }
 
-            const clickHandler = function () {
-                // stops the player from attacking if the game is over
-                if (game.winner() != null) {
-                    cell.removeEventListener('click', clickHandler);
-                } else if (!targetedPeg.classList.contains('hit') && !targetedPeg.classList.contains('miss')) {
-                    let attackStatus = game.attack(i);
-                    statusText.textContent = 'Attacking...';
-                    targetedCell.classList.add('firing');
-                    setTimeout(() => {
-                        if (attackStatus === 'miss') {
-                            statusText.textContent = 'Miss!';
-                        } else if (attackStatus === 'hit') {
-                            statusText.textContent = 'Hit!';
-                        }
-                        targetedCell.classList.remove('firing');
-                        renderPegs(game.program);
-                        renderPegs(game.user);
-                    }, 1000);
-                }
-            }
+            // const clickHandler = function () {
+            //     console.log('click handler');
+            //     console.log(targetedPeg)
+            //     // stops the player from attacking if the game is over
+            //     if (game.winner() != null) {
+            //         console.log('game over');
+            //         targetedCell.removeEventListener('click', clickHandler);
+            //     } else if (!targetedPeg.classList.contains('hit') && !targetedPeg.classList.contains('miss')) {
+            //         console.log('attacking');
+            //         let attackStatus = game.attack(i);
+            //         statusText.textContent = 'Attacking...';
+            //         targetedCell.classList.add('firing');
+                    
+            //         programGameboardContainer.querySelectorAll('.gameboard-cell').forEach((cell) => {
+            //             cell.onclick = null;
+            //         });
 
-            cell.addEventListener('click', clickHandler);
-            cell.addEventListener('mouseover', mouseOverHandler);
-            cell.addEventListener('mouseout', mouseOutHandler);
+            //         setTimeout(() => {
+            //             if (attackStatus === 'miss') {
+            //                 statusText.textContent = 'Miss! Counterattack incoming!';
+            //             } else if (attackStatus === 'hit') {
+            //                 statusText.textContent = 'Hit! Fire again!';
+            //             }
+            //             targetedCell.classList.remove('firing');
+            //             targetedCell.classList.remove('targeted');
+            //             renderPegs(game.program);
+            //             renderPegs(game.user);
+
+            //             for (i = 0; i < game.program.board.board.length; i++) {
+            //                 let programCell = programGameboardContainer.children[1].children[1].children[i];
+            //                 programCell.onclick = clickHandler;
+            //             }
+
+            //         }, 1000);
+            //     }
+            // }
+
+            cell.onclick = clickHandler(targetedCell);
+            // cell.onmouseover = mouseOverHandler;
+            // cell.onmouseout = mouseOutHandler;
 
             // shows ships to the defending player's gameboard for testing
             if(game.program.board.board[i] != null || game.program.board.board[i] === 'miss') {
@@ -146,6 +162,46 @@ const gameUI = (currentGame) => {
         }
     }
 
+    function clickHandler(cell) {
+        return function () {
+            let programGameboard = document.querySelector('.gameboard.program');
+            // stops the player from attacking if the game is over
+            if (game.winner() != null) {
+                cell.removeEventListener('click', clickHandler);
+            } else if (!cell.classList.contains('hit') && !cell.classList.contains('miss')) {
+                let attackStatus = game.attack(cell.id);
+                statusText.textContent = 'Attacking...';
+                cell.classList.add('firing');
+
+                programGameboard.querySelectorAll('.gameboard-cell').forEach((cell) => {
+                    cell.onclick = null;
+                });
+
+
+                setTimeout(() => {
+                    if (attackStatus === 'miss') {
+                        statusText.textContent = 'Miss! Counterattack launched!';
+                    } else if (attackStatus === 'hit') {
+                        statusText.textContent = 'Hit! Fire again!';
+                    }
+                    cell.classList.remove('firing');
+                    cell.classList.remove('targeted');
+                    renderPegs(game.program);
+                    renderPegs(game.user);
+
+                    programGameboard.querySelectorAll('.gameboard-cell').forEach((cell) => {
+                        cell.onclick = clickHandler(cell);
+                    });
+
+
+                }, 1000);
+            }
+        }
+    }
+
+
+
+
     function renderPegs(player) {
         for (let i = 0; i < 100; i++) {
             let gameboard = document.querySelector(`.${player.id}`);
@@ -153,8 +209,10 @@ const gameUI = (currentGame) => {
             let peg = cell.querySelector('.peg');
             if (player.board.board[i] != null) {
                 if (player.board.board[i] === 'miss') {
+                    console.log('miss')
                     peg.classList.add('miss');
-                } else if (player.board.board[i].hit.includes(i)) {
+                } else if (player.board.board[i].hit.includes(String(i))) {
+                    console.log('hit')
                     peg.classList.add('hit');
                     if (player.board.board[i].isSunk()) {
                         cell.classList.add('ship');
@@ -165,15 +223,22 @@ const gameUI = (currentGame) => {
 
             if (game.winner() != null) {
                 console.log(game.winner())
-                statusText.textContent = `${game.winner()} wins!`;
+                statusText.textContent = `Game Over! ${game.winner()} wins!`;
             }
         }       
     }
 
     function getShipPlacement(ship, board, callback) {
         statusText.textContent = `Place your ${ship.name}!`;
+        let userGameboard = document.querySelector(`.gameboard.user`);
         for (let i = 0; i < board.board.length; i++) {
-            let userGameboard = document.querySelector(`.gameboard.user`);
+            userGameboard.onmouseleave = function() {
+                for (let i = 0; i < board.board.length; i++) {
+                    let cell = userGameboard.children[i];
+                    cell.classList.remove('hover');
+                    cell.classList.remove('invalid');
+                }
+            }
             // let cell = document.getElementById(i);
             let cell = userGameboard.children[i];
             cell.onmouseover = function() {
