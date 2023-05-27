@@ -1,7 +1,8 @@
+/* eslint-disable max-len */
 const gameUI = (currentGame) => {
   const game = currentGame;
 
-  let orientation = 'horizontal';
+  let selectedOrientation = 'horizontal';
 
   const app = document.querySelector('#app');
   app.innerHTML = '';
@@ -148,70 +149,93 @@ const gameUI = (currentGame) => {
   function getShipPlacement(ship, board, callback) {
     statusText.textContent = `Place your ${ship.name}!`;
     const userGameboard = document.querySelector('.gameboard.user');
-    for (let i = 0; i < board.board.length; i += 1) {
-      userGameboard.onmouseleave = function removeClasses() {
-        for (let j = 0; j < board.board.length; j += 1) {
-          const cell = userGameboard.children[j];
-          cell.classList.remove('hover');
-          cell.classList.remove('invalid');
+
+    function removeClasses() {
+      for (let j = 0; j < board.board.length; j += 1) {
+        const cell = userGameboard.children[j];
+        cell.classList.remove('hover');
+        cell.classList.remove('invalid');
+      }
+    }
+
+    function highlightValidCells(selectedId, orientation) {
+      // Resets all cells to default
+      for (let i = 0; i < board.board.length; i += 1) {
+        const cell = userGameboard.children[i];
+        cell.classList.remove('hover');
+        cell.classList.remove('invalid');
+      }
+
+      let validSelectedId = selectedId; // Initialize validSelectedId with selectedId
+
+      let multiplyer = 1;
+      // Finds closest valid cell id to selected cell
+      if (orientation === 'horizontal') {
+        if ((selectedId % 10) + ship.length > 10) {
+          validSelectedId -= (selectedId % 10) + ship.length - 10;
         }
-      };
-      // let cell = document.getElementById(i);
-      const cell = userGameboard.children[i];
-      cell.onmouseover = function resetAllCellClasses() {
-        let selectedId = i;
-        let multiplyer = 1;
-        // resets all cells to default
-        for (let i = 0; i < board.board.length; i++) {
+        multiplyer = 1;
+      } else if (orientation === 'vertical') {
+        if (selectedId + (ship.length - 1) * 10 > 99) {
+          validSelectedId = (99 - (ship.length - 1) * 10) - (9 - (selectedId % 10));
+        }
+        multiplyer = 10;
+      }
+
+      // Adds hover class to cells that ship will be placed on
+      // Adds invalid class to cells that ship cannot be placed on
+      for (let j = validSelectedId; j < validSelectedId + ship.length * multiplyer; j += multiplyer) {
+        // Gets cell from user gameboard
+        const cell = userGameboard.children[j];
+        if (game.checkShipPlacement(board, ship, validSelectedId, orientation) === false) {
+          cell.classList.add('invalid');
+        } else {
+          cell.classList.add('hover');
+        }
+      }
+
+      return validSelectedId; // Return the validSelectedId
+    }
+
+    function placeShipOnClick(selectedId, orientation) {
+      if (game.checkShipPlacement(board, ship, selectedId, orientation)) {
+        board.placeShip(ship, selectedId, orientation);
+
+        for (let i = 0; i < board.board.length; i += 1) {
           const cell = userGameboard.children[i];
-          cell.classList.remove('hover');
-          cell.classList.remove('invalid');
+          // Removes hover class from all cells and renders ship on board
+          if (board.board[i] != null) {
+            cell.classList.remove('hover');
+            cell.classList.add('ship');
+          }
+          cell.onmouseover = null;
+          cell.onclick = null;
         }
 
-        // finds closest valid cell id to selected cell
-        if (orientation === 'horizontal') {
-          if (selectedId % 10 + ship.length > 10) {
-            selectedId -= (selectedId % 10 + ship.length - 10);
-          }
-          multiplyer = 1;
-        } else if (orientation === 'vertical') {
-          if (selectedId + (ship.length - 1) * 10 > 99) {
-            selectedId = (99 - (ship.length - 1) * 10) - (9 - (selectedId % 10));
-          }
-          multiplyer = 10;
-        }
+        callback();
+      }
+    }
 
-        // adds hover class to cells that ship will be placed on
-        // adds invalid class to cells that ship cannot be placed on
-        for (let j = selectedId; j < selectedId + ship.length * multiplyer; j += multiplyer) {
-          // gets cell from user gameboard
-          const cell = userGameboard.children[j];
-          if (game.checkShipPlacement(board, ship, selectedId, orientation) === false) {
-            cell.classList.add('invalid');
-          } else {
-            cell.classList.add('hover');
-          }
-        }
+    function handleCellMouseOver(i) {
+      highlightValidCells(i, selectedOrientation);
+    }
 
-        // places the ship on the board when clicked if position is valid
-        cell.onclick = function () {
-          if (game.checkShipPlacement(board, ship, selectedId, orientation)) {
-            board.placeShip(ship, selectedId, orientation);
-            for (let i = 0; i < board.board.length; i++) {
-              const cell = userGameboard.children[i];
-              // removes hover class from all cells and renders ship on board
-              if (board.board[i] != null) {
-                console.log(board.board[i]);
-                cell.classList.remove('hover');
-                cell.classList.add('ship');
-              }
-              cell.onmouseover = null;
-              cell.onclick = null;
-            }
+    function handleCellClick(i) {
+      const validSelectedId = highlightValidCells(i, selectedOrientation);
+      placeShipOnClick(validSelectedId, selectedOrientation);
+    }
 
-            callback();
-          }
-        };
+    for (let i = 0; i < board.board.length; i += 1) {
+      userGameboard.onmouseleave = removeClasses;
+
+      const cell = userGameboard.children[i];
+
+      cell.onmouseover = function idek() {
+        handleCellMouseOver(i);
+      };
+
+      cell.onclick = function sdek() {
+        handleCellClick(i);
       };
     }
   }
@@ -221,10 +245,10 @@ const gameUI = (currentGame) => {
     orientationButton.classList.add('orientation-button');
     orientationButton.textContent = 'Rotate';
     orientationButton.onclick = function changeOrientation() {
-      if (orientation === 'horizontal') {
-        orientation = 'vertical';
+      if (selectedOrientation === 'horizontal') {
+        selectedOrientation = 'vertical';
       } else {
-        orientation = 'horizontal';
+        selectedOrientation = 'horizontal';
       }
     };
 
