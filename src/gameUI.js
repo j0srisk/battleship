@@ -150,7 +150,7 @@ const gameUI = (currentGame) => {
     const userGameboard = document.querySelector('.gameboard.user');
     for (let i = 0; i < board.board.length; i += 1) {
       userGameboard.onmouseleave = function removeClasses() {
-        for (let j = 0; i < board.board.length; j += 1) {
+        for (let j = 0; j < board.board.length; j += 1) {
           const cell = userGameboard.children[j];
           cell.classList.remove('hover');
           cell.classList.remove('invalid');
@@ -201,6 +201,7 @@ const gameUI = (currentGame) => {
               const cell = userGameboard.children[i];
               // removes hover class from all cells and renders ship on board
               if (board.board[i] != null) {
+                console.log(board.board[i]);
                 cell.classList.remove('hover');
                 cell.classList.add('ship');
               }
