@@ -1,5 +1,5 @@
 import {
-  assert, beforeEach, describe, it,
+  assert, beforeEach, describe, expect, it,
 } from 'vitest';
 import gameboardFactory from '../factories/gameboard';
 import shipFactory from '../factories/ship';
