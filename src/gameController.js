@@ -78,7 +78,7 @@ const gameController = () => {
   };
 
   const attack = (position) => {
-    const attackResult = program.board.receiveAttack(position);
+    const attackResult = program.board.receiveAttack(parseInt(position, 10));
 
     if (attackResult === 'hit') {
       return 'hit';

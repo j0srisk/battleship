@@ -86,7 +86,7 @@ const gameUI = (currentGame) => {
       if (player.board.board[i] != null) {
         if (player.board.board[i] === 'miss') {
           peg.classList.add('miss');
-        } else if (player.board.board[i].hit.includes(String(i))) {
+        } else if (player.board.board[i].hit.includes(i)) {
           peg.classList.add('hit');
           if (player.board.board[i].isSunk()) {
             cell.classList.add('ship');
@@ -276,9 +276,9 @@ const gameUI = (currentGame) => {
       cell.onmouseover = mouseOverHandler(targetedCell);
 
       // shows ships to the defending player's gameboard for testing
-      // if(game.program.board.board[i] != null || game.program.board.board[i] === 'miss') {
-      //     cell.classList.add('ship');
-      // }
+      if (game.program.board.board[i] != null || game.program.board.board[i] === 'miss') {
+        cell.classList.add('ship');
+      }
 
       // shows ships to the attacking player's gameboard
       cell = userGameboardContainer.children[1].children[1].children[i];
