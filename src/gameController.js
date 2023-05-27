@@ -5,8 +5,6 @@ const gameController = () => {
   const user = playerFactory('user', 'User');
   const program = playerFactory('program', 'Computer');
 
-  const counterAttacks = [];
-
   const winner = () => {
     if (user.board.allSunk()) {
       return program.name;
@@ -62,17 +60,15 @@ const gameController = () => {
   const counterAttack = () => {
     let counterAttackPosition = Math.floor(Math.random() * 100);
 
-    while (counterAttacks.includes(counterAttackPosition)) {
+    while (program.attacks.includes(counterAttackPosition)) {
       counterAttackPosition = Math.floor(Math.random() * 100);
     }
 
-    counterAttacks.push(counterAttackPosition); // add new position to array
+    program.attacks.push(counterAttackPosition); // add new position to array
 
     const attackResult = user.board.receiveAttack(counterAttackPosition);
 
     if (attackResult === 'hit') {
-      // Store the hit position and recursively call counterAttack()
-      counterAttacks.push(counterAttackPosition);
       counterAttack();
     }
   };

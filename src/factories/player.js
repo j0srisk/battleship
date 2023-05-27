@@ -13,8 +13,10 @@ const playerFactory = (playerId, playerName) => {
     shipFactory(2, 'Patrol Boat'),
   ];
 
+  const attacks = [];
+
   return {
-    id, name, board, ships,
+    id, name, board, ships, attacks,
   };
 };
 

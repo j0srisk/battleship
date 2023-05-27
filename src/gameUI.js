@@ -113,10 +113,10 @@ const gameUI = (currentGame) => {
   function clickHandler(clickedCell) {
     return function handleAttackClick() {
       const programGameboard = document.querySelector('.gameboard.program');
-      // stops the player from attacking if the game is over
+      const clickedPeg = clickedCell.querySelector('.peg');
       if (game.winner() != null) {
         clickedCell.removeEventListener('click', clickHandler);
-      } else if (!clickedCell.classList.contains('hit') && !clickedCell.classList.contains('miss')) {
+      } else if (!clickedPeg.classList.contains('hit') && !clickedPeg.classList.contains('miss')) {
         const attackStatus = game.attack(clickedCell.id);
         statusText.textContent = 'Attacking...';
         clickedCell.classList.add('firing');
