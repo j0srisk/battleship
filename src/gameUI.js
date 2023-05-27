@@ -301,9 +301,9 @@ const gameUI = (currentGame) => {
       cell.onmouseover = mouseOverHandler(targetedCell);
 
       // shows ships to the defending player's gameboard for testing
-      if (game.program.board.board[i] != null || game.program.board.board[i] === 'miss') {
-        cell.classList.add('ship');
-      }
+      // if (game.program.board.board[i] != null || game.program.board.board[i] === 'miss') {
+      //   cell.classList.add('ship');
+      // }
 
       // shows ships to the attacking player's gameboard
       cell = userGameboardContainer.children[1].children[1].children[i];
