@@ -142,26 +142,26 @@ h2 {
 
 .peg {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   border-radius: 100%;
   background-color: #484848;
   z-index: 1;
 }
 
 .hit {
-  width: 10px;
-  height: 10px;
-  border: 5px solid #d14b40 !important;
+  width: 15px;
+  height: 15px;
+  border: 7.5px solid #d14b40 !important;
   border-radius: 100%;
   background-color: #ad3c34 !important;
   box-shadow: #1a1a1a 0px 0px 5px;
 }
 
 .miss {
-  width: 10px;
-  height: 10px;
-  border: 5px solid #ffffff;
+  width: 15px;
+  height: 15px;
+  border: 7.5px solid #ffffff;
   border-radius: 100%;
   background-color: #a8a8a8 !important;
   box-shadow: #1a1a1a 0px 0px 5px;
@@ -199,7 +199,7 @@ h2 {
   position: relative;
   width: calc(var(--gameboard-cell-size) + 4px);
   height: calc(var(--gameboard-cell-size) + 4px);
-  font-size: x-large;
+  font-size: xx-large;
   flex-shrink: 0;
 }
 
@@ -343,6 +343,28 @@ footer {
   :root{
     --gameboard-cell-size: 32px;
   }
+
+  .coordinate {
+    font-size: large;
+  }
+
+  .peg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .hit {
+    width: 10px;
+    height: 10px;
+    border: 5px solid #d14b40 !important;
+  }
+
+  .miss {
+    width: 10px;
+    height: 10px;
+    border: 5px solid #ffffff !important;
+  }
+  
 }
 
 @media screen and (max-width: 991px) {
@@ -395,6 +417,10 @@ footer {
     font-size: large;
     padding: .25rem;
     justify-content: center;
+  }
+
+  .target-text {
+    display: none;
   }
 
   footer{
