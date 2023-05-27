@@ -3,7 +3,7 @@ import playerFactory from './factories/player';
 const gameController = () => {
 // create players
   const user = playerFactory('user', 'User');
-  const program = playerFactory('program', 'Program');
+  const program = playerFactory('program', 'Computer');
 
   const counterAttacks = [];
 

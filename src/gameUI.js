@@ -128,7 +128,7 @@ const gameUI = (currentGame) => {
 
         setTimeout(() => {
           if (attackStatus === 'miss') {
-            statusText.textContent = 'Miss! Counterattack launched!';
+            statusText.textContent = 'Miss! Countermeasures launched!';
           } else if (attackStatus === 'hit') {
             statusText.textContent = 'Hit! Fire again!';
           }
